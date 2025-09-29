@@ -7,9 +7,13 @@ export default defineConfig({
     port: 5173,
     host: true
   },
-  // Important for SPA routing
   build: {
     outDir: 'dist',
     sourcemap: false
+  },
+  // Add this for Vercel deployment
+  base: './',
+  define: {
+    'process.env': {}
   }
 })

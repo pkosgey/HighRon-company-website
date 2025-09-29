@@ -21,7 +21,6 @@ export default function App() {
         <Route path="/join-server" element={<JoinServer />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        {/* Add catch-all route for 404 handling */}
         <Route path="*" element={<OwlsecInspiredLanding />} />
       </Routes>
     </Router>

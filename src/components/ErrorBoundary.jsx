@@ -27,7 +27,7 @@ class ErrorBoundary extends React.Component {
           fontFamily: 'Arial, sans-serif',
           color: '#333'
         }}>
-          <h1 style={{ color: '#e74c3c' }}>⚠️ Something went wrong</h1>
+          <h1 style={{ color: '#e74c3c' }}>Something went wrong</h1>
           <p>Please refresh the page or try again later.</p>
           <details style={{ 
             textAlign: 'left', 

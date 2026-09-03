@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { 
+  Laptop, Lock, Globe, Zap, Wrench, BarChart3, 
+  Cpu, Lightbulb, Smartphone, CheckCircle, BookOpen, 
+  FlaskConical, Briefcase, Sparkles 
+} from "lucide-react";
 
 export default function JoinServer() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  const icons = ["⏳", "💻", "🔒", "🌐", "⚡", "🔧", "📊", "🤖", "💡", "📱"];
+  const techIcons = [Laptop, Lock, Globe, Zap, Wrench, BarChart3, Cpu, Lightbulb, Smartphone];
 
   useEffect(() => {
     try {
@@ -36,7 +41,7 @@ export default function JoinServer() {
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "#4f46e5";
+        ctx.fillStyle = "#6366f1";
         ctx.fill();
       }
       update() {
@@ -79,29 +84,29 @@ export default function JoinServer() {
   }, []);
 
   return (
-    <div className="relative w-screen min-h-screen bg-slate-900 overflow-hidden">
+    <div className="relative w-full min-h-screen bg-slate-900 overflow-x-hidden">
       {/* Fixed Background Elements */}
       <canvas
         id="techBackground"
-        className="fixed inset-0 w-full h-full"
+        className="fixed inset-0 w-full h-full pointer-events-none"
         style={{ display: 'block' }}
       />
 
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-900 opacity-85" />
-        {icons.map((ic, i) => (
+      <div className="fixed inset-0 pointer-events-none z-0 select-none">
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-950/90 via-slate-900/90 to-purple-950/90" />
+        {techIcons.map((IconComp, i) => (
           <motion.div
             key={i}
-            className="absolute text-white/60"
+            className="absolute text-indigo-400/20"
             style={{
               top: `${10 + (i * 14) % 80}%`,
               left: `${5 + (i * 23) % 85}%`,
             }}
             initial={{ opacity: 0, y: 20, scale: 0.85 }}
             animate={{
-              opacity: [0.25, 0.85, 0.25],
-              y: [0, -30, 0],
-              rotate: [0, 20, -10, 0],
+              opacity: [0.1, 0.35, 0.1],
+              y: [0, -25, 0],
+              rotate: [0, 15, -10, 0],
             }}
             transition={{
               duration: 8 + i,
@@ -110,37 +115,38 @@ export default function JoinServer() {
               delay: i * 0.7,
             }}
           >
-            <span className="block text-5xl sm:text-6xl md:text-7xl">{ic}</span>
+            <IconComp className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20" />
           </motion.div>
         ))}
       </div>
 
       {/* Scrollable Content Area */}
       <div className="relative z-10 w-full min-h-screen">
-        <div className="flex items-center justify-center w-full px-4 py-8">
+        <div className="flex items-center justify-center w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <motion.div 
             className="text-center w-full max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.7 }}
           >
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-6 text-white drop-shadow-lg">
-              Welcome to HighRon Tech, {user?.username || "Guest"}! 
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold mb-6 text-white drop-shadow-lg tracking-tight">
+              Welcome to HighRon Tech, {user?.username || "Innovator"}
             </h1>
             
             {/* Company Introduction */}
             <motion.div 
-              className="bg-slate-800 bg-opacity-70 backdrop-blur-md shadow-2xl rounded-2xl p-6 sm:p-8 mx-auto mb-8"
-              initial={{ opacity: 0, scale: 0.9 }}
+              className="bg-slate-800/80 backdrop-blur-md shadow-2xl rounded-2xl p-5 sm:p-8 mx-auto mb-6 sm:mb-8 border border-white/10"
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-indigo-400">
-                Pioneering the Future of Technology 🌟
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 text-center text-indigo-400 flex items-center justify-center gap-2">
+                <Sparkles size={22} />
+                <span>Pioneering the Future of Technology</span>
               </h2>
-              <div className="text-base sm:text-lg text-slate-200 leading-relaxed space-y-4">
+              <div className="text-sm sm:text-base lg:text-lg text-slate-200 leading-relaxed space-y-3 sm:space-y-4 text-left sm:text-center">
                 <p>
-                  At <strong>HighRon Tech</strong>, we're not just building technology – we're shaping the future for generations to come. 
+                  At <strong className="text-white">HighRon Tech</strong>, we're not just building technology – we're shaping the future for generations to come. 
                   As innovators at the forefront of digital transformation, we explore uncharted territories in artificial intelligence, 
                   quantum computing, sustainable tech, and immersive digital experiences.
                 </p>
@@ -159,8 +165,8 @@ export default function JoinServer() {
 
             {/* Benefits Section */}
             <motion.div 
-              className="bg-slate-800 bg-opacity-70 backdrop-blur-md shadow-2xl rounded-2xl p-6 sm:p-8 mx-auto mb-8"
-              initial={{ opacity: 0, scale: 0.9 }}
+              className="bg-slate-800/80 backdrop-blur-md shadow-2xl rounded-2xl p-5 sm:p-8 mx-auto mb-6 sm:mb-8 border border-white/10"
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
@@ -168,87 +174,93 @@ export default function JoinServer() {
                 Your Journey Begins Here 
               </h2>
               
-              <div className="grid md:grid-cols-2 gap-8 mb-8">
-                <div>
-                  <h3 className="text-lg font-semibold text-indigo-300 mb-4">Community Benefits</h3>
-                  <ul className="space-y-3 text-base text-slate-200">
-                    <li className="flex items-center">
-                      <span className="text-green-400 mr-3">✅</span>
-                      Access exclusive community channels
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-8 text-left">
+                <div className="bg-slate-900/50 p-4 sm:p-5 rounded-xl border border-white/5">
+                  <h3 className="text-base sm:text-lg font-semibold text-indigo-300 mb-3 sm:mb-4 flex items-center gap-2">
+                    <Globe size={18} className="text-indigo-400" />
+                    <span>Community Benefits</span>
+                  </h3>
+                  <ul className="space-y-2.5 text-sm sm:text-base text-slate-200">
+                    <li className="flex items-center gap-2.5">
+                      <CheckCircle size={16} className="text-emerald-400 shrink-0" />
+                      <span>Access exclusive community channels</span>
                     </li>
-                    <li className="flex items-center">
-                      <span className="text-green-400 mr-3">✅</span>
-                      Join discussions with industry experts
+                    <li className="flex items-center gap-2.5">
+                      <CheckCircle size={16} className="text-emerald-400 shrink-0" />
+                      <span>Join discussions with industry experts</span>
                     </li>
-                    <li className="flex items-center">
-                      <span className="text-green-400 mr-3">✅</span>
-                      Participate in live tech events
+                    <li className="flex items-center gap-2.5">
+                      <CheckCircle size={16} className="text-emerald-400 shrink-0" />
+                      <span>Participate in live tech events</span>
                     </li>
-                    <li className="flex items-center">
-                      <span className="text-green-400 mr-3">✅</span>
-                      Get personalized mentorship
+                    <li className="flex items-center gap-2.5">
+                      <CheckCircle size={16} className="text-emerald-400 shrink-0" />
+                      <span>Get personalized mentorship</span>
                     </li>
                   </ul>
                 </div>
                 
-                <div>
-                  <h3 className="text-lg font-semibold text-indigo-300 mb-4">Learning Opportunities</h3>
-                  <ul className="space-y-3 text-base text-slate-200">
-                    <li className="flex items-center">
-                      <span className="text-blue-400 mr-3">📚</span>
-                      Cutting-edge tech resources
+                <div className="bg-slate-900/50 p-4 sm:p-5 rounded-xl border border-white/5">
+                  <h3 className="text-base sm:text-lg font-semibold text-indigo-300 mb-3 sm:mb-4 flex items-center gap-2">
+                    <BookOpen size={18} className="text-indigo-400" />
+                    <span>Learning Opportunities</span>
+                  </h3>
+                  <ul className="space-y-2.5 text-sm sm:text-base text-slate-200">
+                    <li className="flex items-center gap-2.5">
+                      <CheckCircle size={16} className="text-indigo-400 shrink-0" />
+                      <span>Cutting-edge tech resources</span>
                     </li>
-                    <li className="flex items-center">
-                      <span className="text-blue-400 mr-3">🔬</span>
-                      Research collaboration projects
+                    <li className="flex items-center gap-2.5">
+                      <CheckCircle size={16} className="text-indigo-400 shrink-0" />
+                      <span>Research collaboration projects</span>
                     </li>
-                    <li className="flex items-center">
-                      <span className="text-blue-400 mr-3">💼</span>
-                      Career development programs
+                    <li className="flex items-center gap-2.5">
+                      <CheckCircle size={16} className="text-indigo-400 shrink-0" />
+                      <span>Career development programs</span>
                     </li>
-                    <li className="flex items-center">
-                      <span className="text-blue-400 mr-3">🌍</span>
-                      Global networking opportunities
+                    <li className="flex items-center gap-2.5">
+                      <CheckCircle size={16} className="text-indigo-400 shrink-0" />
+                      <span>Global networking opportunities</span>
                     </li>
                   </ul>
                 </div>
               </div>
 
-              <motion.button
-                className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 mt-4"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/resources')}
->
-                📚 Explore Resources
-              </motion.button>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3.5 sm:gap-4 mt-2">
+                <motion.button
+                  className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 sm:py-3.5 px-6 rounded-xl transition duration-200 text-sm sm:text-base shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate('/resources')}
+                >
+                  <BookOpen size={16} />
+                  <span>Explore Resources</span>
+                </motion.button>
 
-              <motion.button
-                className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 text-lg"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/login')}
-              >
-                Enter the Innovation Dashboard →
-              </motion.button>
+                <motion.button
+                  className="w-full sm:w-auto bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 sm:py-3.5 px-7 rounded-xl transition duration-200 text-sm sm:text-base shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate('/login')}
+                >
+                  <span>Enter Innovation Dashboard →</span>
+                </motion.button>
+              </div>
             </motion.div>
 
             {/* Additional Content to Ensure Scrollability */}
             <motion.div 
-              className="bg-slate-800 bg-opacity-50 backdrop-blur-md shadow-xl rounded-2xl p-6 mx-auto"
+              className="bg-slate-800/60 backdrop-blur-md shadow-xl rounded-2xl p-5 sm:p-6 mx-auto border border-white/5"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              <h3 className="text-lg sm:text-xl font-bold mb-4 text-center text-indigo-300">
+              <h3 className="text-base sm:text-xl font-bold mb-2 text-indigo-300">
                 Ready to Make an Impact?
               </h3>
-              <p className="text-slate-200 text-base mb-4">
+              <p className="text-slate-200 text-sm sm:text-base leading-relaxed">
                 Your journey with HighRon Tech starts now. Together, we'll explore the frontiers of technology 
                 and create solutions that matter.
-              </p>
-              <p className="text-slate-200 text-base">
-                Scroll down to see more exciting features and opportunities waiting for you!
               </p>
             </motion.div>
 

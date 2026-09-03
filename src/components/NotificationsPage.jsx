@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Bell, 
@@ -17,10 +18,13 @@ import {
   Clock,
   Search,
   Trash2,
-  Archive
+  Archive,
+  ArrowLeft,
+  LogOut
 } from "lucide-react";
 
 const NotificationsPage = () => {
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -220,11 +224,42 @@ const NotificationsPage = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("session_user");
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   return (
-    <div className="min-h-screen w-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-x-hidden">
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 text-white overflow-x-hidden flex flex-col">
+      {/* Top Navbar */}
+      <nav className="w-full bg-slate-900/80 backdrop-blur-md border-b border-white/10 px-4 sm:px-8 py-3.5 flex items-center justify-between z-20">
+        <div className="flex items-center gap-3 sm:gap-6">
+          <Link to="/" className="flex items-center gap-2 text-slate-300 hover:text-white transition text-xs sm:text-sm font-medium">
+            <ArrowLeft size={16} />
+            <span>Home</span>
+          </Link>
+          <span className="text-slate-600">/</span>
+          <span className="text-white font-semibold text-xs sm:text-sm">Notification Hub</span>
+        </div>
+        <div className="flex items-center gap-2.5 sm:gap-4">
+          <Link to="/dashboard" className="text-xs sm:text-sm bg-indigo-600 hover:bg-indigo-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl transition font-medium">
+            Dashboard
+          </Link>
+          <button 
+            onClick={handleLogout}
+            className="text-xs sm:text-sm text-slate-400 hover:text-red-400 p-2 rounded-xl hover:bg-white/5 transition flex items-center gap-1.5"
+            title="Log Out"
+          >
+            <LogOut size={16} />
+            <span className="hidden sm:inline">Log out</span>
+          </button>
+        </div>
+      </nav>
+
       {/* Header - Full Width */}
       <div className="w-full relative overflow-hidden border-b border-slate-700/50">
-        <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm pointer-events-none" />
         <div className="relative z-10 w-full px-4 py-6 sm:py-8 lg:py-10">
           <div className="w-full max-w-7xl mx-auto">
             <motion.div
@@ -234,34 +269,32 @@ const NotificationsPage = () => {
               className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full"
             >
               <div className="flex-1 min-w-0">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 text-white">Notifications</h1>
-                <p className="text-slate-300 text-lg sm:text-xl">
-                  {unreadCount > 0 ? `${unreadCount} unread messages` : "All caught up! 🎉"}
+                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold mb-1.5 tracking-tight text-white">Notifications</h1>
+                <p className="text-slate-300 text-sm sm:text-base lg:text-lg">
+                  {unreadCount > 0 ? `${unreadCount} unread message${unreadCount > 1 ? 's' : ''}` : "All caught up"}
                 </p>
               </div>
               
-              <div className="flex gap-3 flex-shrink-0">
+              <div className="flex gap-2.5 sm:gap-3 flex-wrap w-full sm:w-auto">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={markAllAsRead}
-                  className="flex items-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors text-sm sm:text-base"
+                  className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 sm:py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl transition-colors text-xs sm:text-sm font-semibold shadow-lg shadow-indigo-600/20 disabled:opacity-50"
                   disabled={unreadCount === 0}
                 >
-                  <Check size={18} />
-                  <span className="hidden sm:inline">Mark All Read</span>
-                  <span className="sm:hidden">Read All</span>
+                  <Check size={16} />
+                  <span>Mark All Read</span>
                 </motion.button>
                 
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={clearAll}
-                  className="flex items-center gap-2 px-4 py-3 bg-red-600/80 hover:bg-red-700 rounded-lg transition-colors text-sm sm:text-base"
+                  className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 sm:py-3 bg-red-600/80 hover:bg-red-600 rounded-xl transition-colors text-xs sm:text-sm font-semibold shadow-lg shadow-red-600/20"
                 >
-                  <Trash2 size={18} />
-                  <span className="hidden sm:inline">Clear All</span>
-                  <span className="sm:hidden">Clear</span>
+                  <Trash2 size={16} />
+                  <span>Clear All</span>
                 </motion.button>
               </div>
             </motion.div>
@@ -269,9 +302,9 @@ const NotificationsPage = () => {
         </div>
       </div>
 
-      {/* Main Content - Full Screen Height */}
-      <div className="w-screen min-h-[calc(100vh-140px)] flex flex-col">
-        <div className="w-full px-4 py-6 flex-1">
+      {/* Main Content */}
+      <div className="w-full flex-1 flex flex-col">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-6 flex-1">
           <div className="w-full max-w-7xl mx-auto h-full flex flex-col">
             
             {/* Search and Filters */}
@@ -399,7 +432,9 @@ const NotificationsPage = () => {
                     className="flex items-center justify-center py-16 h-full"
                   >
                     <div className="text-center">
-                      <div className="text-6xl mb-4">🔔</div>
+                      <div className="w-16 h-16 rounded-2xl bg-slate-800/80 border border-white/10 flex items-center justify-center mx-auto mb-4 text-indigo-400">
+                        <Bell size={32} />
+                      </div>
                       <h3 className="text-2xl sm:text-3xl font-semibold mb-2">No notifications</h3>
                       <p className="text-slate-400 text-lg mb-6">
                         {searchTerm || filter !== "all" 

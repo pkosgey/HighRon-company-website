@@ -1,18 +1,15 @@
 // CreateAccount.jsx
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cpu, Cloud, Shield, Code, Database, Mail, KeyRound, CheckCircle2, AlertCircle, RefreshCw, ArrowLeft } from "lucide-react";
+import { Cpu, Cloud, Shield, Code, Database, UserPlus, CheckCircle2, AlertCircle, RefreshCw, ArrowRight } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
-import { generateVerificationCode, sendVerificationEmail } from "../utils/emailService";
+import { sendRegistrationNotification } from "../utils/emailService";
 
 export default function CreateAccount() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
-  const [step, setStep] = useState("form"); // "form" | "verify"
-  const [otpInput, setOtpInput] = useState("");
-  const [generatedCode, setGeneratedCode] = useState("");
-  const [isSending, setIsSending] = useState(false);
-  const [feedback, setFeedback] = useState(null); // { type: 'success' | 'error', text: '' }
-  const [countdown, setCountdown] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState(null); // { type: 'success' | 'error' | 'info', text: '' }
+  const [isRegistered, setIsRegistered] = useState(false);
 
   const navigate = useNavigate();
 
@@ -20,106 +17,56 @@ export default function CreateAccount() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Step 1: Initiate verification via EmailJS
-  const handleInitiateSignup = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setFeedback(null);
-    setIsSending(true);
+    setIsSubmitting(true);
 
-    const code = generateVerificationCode();
-    setGeneratedCode(code);
+    const emailTrimmed = form.email.trim();
+    const nameTrimmed = form.name.trim();
 
-    const result = await sendVerificationEmail(form.email.trim(), form.name.trim(), code);
-    setIsSending(false);
-
-    if (result.success) {
-      setStep("verify");
-      setFeedback({
-        type: "success",
-        text: `Security code dispatched to ${form.email}. Please check your inbox (and spam folder).`
-      });
-      // Start 60s resend timer
-      setCountdown(60);
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
-      // If EmailJS has network or configuration warning, allow proceeding with verification code shown for testing
-      setStep("verify");
-      setFeedback({
-        type: "info",
-        text: `Verification Code: [ ${code} ]. (EmailJS message: ${result.message})`
-      });
-    }
-  };
-
-  // Resend OTP Code
-  const handleResendCode = async () => {
-    if (countdown > 0) return;
-    setIsSending(true);
-    setFeedback(null);
-
-    const code = generateVerificationCode();
-    setGeneratedCode(code);
-
-    const result = await sendVerificationEmail(form.email.trim(), form.name.trim(), code);
-    setIsSending(false);
-
-    if (result.success) {
-      setFeedback({
-        type: "success",
-        text: `New verification code dispatched to ${form.email}.`
-      });
-      setCountdown(60);
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
-      setFeedback({
-        type: "info",
-        text: `New Code: [ ${code} ]. Please enter to complete verification.`
-      });
-    }
-  };
-
-  // Step 2: Confirm OTP & Finalize Account Registration
-  const handleVerifyOtp = (e) => {
-    e.preventDefault();
-    setFeedback(null);
-
-    if (otpInput.trim() !== generatedCode.trim()) {
-      setFeedback({
-        type: "error",
-        text: "Invalid verification code. Please check and re-enter the 6 digits."
-      });
-      return;
-    }
-
-    const isAdmin = form.email?.trim().toLowerCase() === "ronaldsneekord002@gmail.com";
+    const isAdmin = emailTrimmed.toLowerCase() === "ronaldsneekord002@gmail.com";
     const userToSave = {
-      ...form,
+      name: nameTrimmed,
+      email: emailTrimmed,
+      password: form.password,
+      role: isAdmin ? "admin" : "learner",
       emailVerified: true,
-      verifiedAt: new Date().toISOString(),
-      role: isAdmin ? "admin" : "learner"
+      registeredAt: new Date().toISOString()
     };
 
-    // Save verified user in localStorage
+    // Save user directly to local storage (no verification barrier)
     localStorage.setItem("user", JSON.stringify(userToSave));
 
-    alert(`Email successfully verified! Welcome ${form.name}, your ${isAdmin ? "Admin " : ""}account is active.`);
-    navigate("/login");
+    // Dispatch welcome notification email via EmailJS
+    let emailStatusMsg = "";
+    try {
+      const emailResult = await sendRegistrationNotification(emailTrimmed, nameTrimmed);
+      if (emailResult.success) {
+        emailStatusMsg = `A welcome confirmation has been sent to ${emailTrimmed}.`;
+      } else {
+        emailStatusMsg = `Account created. Note: Notification email delivery returned: ${emailResult.message}`;
+      }
+    } catch (err) {
+      console.warn("Notification email error:", err);
+      emailStatusMsg = "Account created successfully!";
+    }
+
+    setIsSubmitting(false);
+    setIsRegistered(true);
+    setFeedback({
+      type: "success",
+      text: `Welcome aboard, ${nameTrimmed}! ${emailStatusMsg}`
+    });
+
+    // Automatically navigate to login after 2.5 seconds
+    setTimeout(() => {
+      navigate("/login", { 
+        state: { 
+          message: `Registration complete! Please log in with your credentials.` 
+        } 
+      });
+    }, 2500);
   };
 
   return (
@@ -168,15 +115,13 @@ export default function CreateAccount() {
       >
         <div className="text-center mb-6">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-indigo-500/20">
-            {step === "form" ? <Mail size={22} className="text-white" /> : <KeyRound size={22} className="text-white" />}
+            <UserPlus size={22} className="text-white" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            {step === "form" ? "Create an Account" : "Verify Your Email"}
+            Create an Account
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1.5">
-            {step === "form" 
-              ? "Join HighRon Tech with instant EmailJS email verification" 
-              : `Enter the 6-digit code sent to ${form.email}`}
+            Join HighRon Tech. A confirmation email will be sent upon registration.
           </p>
         </div>
 
@@ -205,9 +150,28 @@ export default function CreateAccount() {
           )}
         </AnimatePresence>
 
-        {step === "form" ? (
-          /* Step 1 Form */
-          <form onSubmit={handleInitiateSignup} className="space-y-4 sm:space-y-5">
+        {isRegistered ? (
+          <div className="text-center py-4 space-y-4">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30 shadow-lg shadow-emerald-500/10">
+              <CheckCircle2 size={32} />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-white">Registration Successful!</h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Redirecting to login page...
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate("/login")}
+              className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 py-3 rounded-xl hover:from-indigo-600 hover:to-purple-700 transition font-semibold text-white shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 cursor-pointer text-sm"
+            >
+              <span>Go to Login Now</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleRegister} className="space-y-4 sm:space-y-5">
             <div>
               <label className="block text-xs font-medium text-slate-300 mb-1.5">Full Name</label>
               <input
@@ -249,69 +213,18 @@ export default function CreateAccount() {
 
             <button
               type="submit"
-              disabled={isSending}
+              disabled={isSubmitting}
               className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 py-3 sm:py-3.5 rounded-xl hover:from-indigo-600 hover:to-purple-700 transition font-semibold text-white shadow-lg shadow-indigo-500/25 active:scale-[0.99] text-sm sm:text-base mt-2 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
             >
-              {isSending ? (
+              {isSubmitting ? (
                 <>
                   <RefreshCw size={17} className="animate-spin" />
-                  <span>Dispatching Security Code...</span>
+                  <span>Registering & Notifying...</span>
                 </>
               ) : (
-                <span>Send Verification Code</span>
+                <span>Register Account</span>
               )}
             </button>
-          </form>
-        ) : (
-          /* Step 2: Email Verification Code */
-          <form onSubmit={handleVerifyOtp} className="space-y-4 sm:space-y-5">
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                6-Digit Security Code
-              </label>
-              <input
-                type="text"
-                maxLength={6}
-                autoFocus
-                placeholder="123456"
-                value={otpInput}
-                onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ""))}
-                className="w-full text-center tracking-[0.4em] font-mono text-xl sm:text-2xl px-4 py-3 rounded-xl bg-slate-700/80 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-white/10"
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={otpInput.length < 6}
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 py-3 sm:py-3.5 rounded-xl hover:from-emerald-600 hover:to-teal-700 transition font-semibold text-white shadow-lg shadow-emerald-500/25 active:scale-[0.99] text-sm sm:text-base flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-            >
-              <CheckCircle2 size={18} />
-              <span>Verify & Complete Registration</span>
-            </button>
-
-            <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/5">
-              <button
-                type="button"
-                onClick={() => {
-                  setStep("form");
-                  setFeedback(null);
-                }}
-                className="hover:text-white flex items-center gap-1 transition"
-              >
-                <ArrowLeft size={13} />
-                <span>Change Email</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleResendCode}
-                disabled={countdown > 0 || isSending}
-                className="text-indigo-400 hover:text-indigo-300 disabled:text-slate-500 font-medium transition"
-              >
-                {countdown > 0 ? `Resend code in ${countdown}s` : "Resend Code"}
-              </button>
-            </div>
           </form>
         )}
 

@@ -57,4 +57,48 @@ export async function sendVerificationEmail(userEmail, userName, code) {
       error
     };
   }
+}/**
+ * Sends a registration welcome notification email to the user when they first register
+ * @param {string} userEmail 
+ * @param {string} userName 
+ * @returns {Promise<{success: boolean, message: string}>}
+ */
+export async function sendRegistrationNotification(userEmail, userName) {
+  try {
+    const templateParams = {
+      to_email: userEmail,
+      recipient_email: userEmail,
+      email: userEmail,
+      to_name: userName || "HighRon Member",
+      name: userName || "HighRon Member",
+      user_name: userName || "HighRon Member",
+      passcode: "WELCOME",
+      verification_code: "WELCOME",
+      otp_code: "WELCOME",
+      code: "WELCOME",
+      message: `Welcome to HighRon Tech, ${userName || "Member"}! Your account has been registered successfully. You now have full access to explore cybersecurity insights, study resources, and join our active developer community.`,
+      company: "HighRon Tech",
+      reply_to: "noreply@highron.tech"
+    };
+
+    const response = await emailjs.send(
+      SERVICE_ID,
+      TEMPLATE_ID,
+      templateParams,
+      PUBLIC_KEY
+    );
+
+    return {
+      success: true,
+      message: "Notification email dispatched to your inbox!",
+      response
+    };
+  } catch (error) {
+    console.warn("EmailJS notification error:", error);
+    return {
+      success: false,
+      message: error?.text || error?.message || "Email notification failed to dispatch.",
+      error
+    };
+  }
 }

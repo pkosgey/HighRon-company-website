@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { Laptop, Zap, Cloud, Lock, Settings, Radio, Sparkles, ShieldAlert, KeyRound, CheckCircle2, RefreshCw } from "lucide-react";
-import { generateVerificationCode, sendVerificationEmail } from "../utils/emailService";
+import { motion } from "framer-motion";
+import { Laptop, Zap, Cloud, Lock, Settings, Radio, ShieldAlert, LogIn, RefreshCw } from "lucide-react";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const [unverifiedFlow, setUnverifiedFlow] = useState(false);
-  const [otpInput, setOtpInput] = useState("");
-  const [generatedCode, setGeneratedCode] = useState("");
-  const [isSending, setIsSending] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [feedback, setFeedback] = useState(null);
 
   const navigate = useNavigate();
@@ -20,9 +16,10 @@ export default function Login() {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setFeedback(null);
+    setIsLoggingIn(true);
 
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const isAdminEmail = form.email?.trim().toLowerCase() === "ronaldsneekord002@gmail.com";
@@ -35,39 +32,15 @@ export default function Login() {
     );
 
     if (!isMatch) {
-      alert("Invalid email or password!");
+      setIsLoggingIn(false);
+      setFeedback({
+        type: "error",
+        text: "Invalid email or password! Please verify your login credentials."
+      });
       return;
     }
 
-    // Check if account email is verified
-    const isEmailVerified = storedUser?.emailVerified === true;
-
-    if (!isEmailVerified && !isAdminEmail) {
-      // Prompt instant EmailJS verification flow before login
-      setUnverifiedFlow(true);
-      setIsSending(true);
-
-      const code = generateVerificationCode();
-      setGeneratedCode(code);
-
-      const res = await sendVerificationEmail(form.email.trim(), storedUser?.name || "Member", code);
-      setIsSending(false);
-
-      if (res.success) {
-        setFeedback({
-          type: "info",
-          text: `Please verify your email address to log in. Security code sent to ${form.email}.`
-        });
-      } else {
-        setFeedback({
-          type: "info",
-          text: `Verification Code: [ ${code} ]. (EmailJS: ${res.message})`
-        });
-      }
-      return;
-    }
-
-    // Successfully authenticate
+    // Successfully authenticate directly
     const activeUser = {
       ...(storedUser || {}),
       name: storedUser?.name || (isAdminEmail ? "Ronald (Admin)" : "HighRon Member"),
@@ -78,32 +51,7 @@ export default function Login() {
     };
 
     localStorage.setItem("session_user", JSON.stringify(activeUser));
-    navigate(fromDestination);
-  };
-
-  // Complete Email Verification during Login
-  const handleVerifyLoginOtp = (e) => {
-    e.preventDefault();
-    if (otpInput.trim() !== generatedCode.trim()) {
-      setFeedback({
-        type: "error",
-        text: "Invalid code. Please re-enter the 6 digits."
-      });
-      return;
-    }
-
-    const storedUser = JSON.parse(localStorage.getItem("user")) || {};
-    const updatedUser = {
-      ...storedUser,
-      email: form.email.trim(),
-      emailVerified: true,
-      verifiedAt: new Date().toISOString()
-    };
-
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    localStorage.setItem("session_user", JSON.stringify(updatedUser));
-
-    alert("Email verified successfully! Logging you in...");
+    setIsLoggingIn(false);
     navigate(fromDestination);
   };
 
@@ -157,10 +105,10 @@ export default function Login() {
       >
         <div className="bg-slate-800/85 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl border border-white/10">
           <h1 className="text-2xl sm:text-3xl font-bold mb-3 text-center text-white bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            {unverifiedFlow ? "Email Verification Required" : "Welcome Back"}
+            Welcome Back
           </h1>
 
-          {redirectMessage && !unverifiedFlow && (
+          {redirectMessage && (
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -181,85 +129,50 @@ export default function Login() {
             </div>
           )}
 
-          {unverifiedFlow ? (
-            /* Inline Verification Prompt */
-            <form onSubmit={handleVerifyLoginOtp} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                  Enter 6-Digit EmailJS Verification Code
-                </label>
-                <input
-                  type="text"
-                  maxLength={6}
-                  autoFocus
-                  placeholder="123456"
-                  value={otpInput}
-                  onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ""))}
-                  className="w-full text-center tracking-[0.35em] font-mono text-xl px-4 py-3 rounded-xl bg-slate-700/80 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-white/10"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={otpInput.length < 6}
-                className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 py-3 rounded-xl font-semibold text-white shadow-lg shadow-emerald-500/25 active:scale-[0.99] text-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-              >
-                <CheckCircle2 size={16} />
-                <span>Verify Email & Enter</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setUnverifiedFlow(false)}
-                className="w-full text-center text-xs text-slate-400 hover:text-white pt-1 transition"
-              >
-                Return to Login Credentials
-              </button>
-            </form>
-          ) : (
-            /* Standard Login Form */
-            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">Email Address</label>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="you@example.com"
-                  value={form.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-700/80 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-white/5 text-sm sm:text-base"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-700/80 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-white/5 text-sm sm:text-base"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isSending}
-                className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 py-3 sm:py-3.5 rounded-xl hover:from-indigo-600 hover:to-purple-700 transition font-semibold text-white shadow-lg shadow-indigo-500/25 active:scale-[0.99] text-sm sm:text-base mt-2 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                {isSending ? (
-                  <>
-                    <RefreshCw size={17} className="animate-spin" />
-                    <span>Verifying with EmailJS...</span>
-                  </>
-                ) : (
+          {/* Standard Login Form */}
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+            <div>
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">Email Address</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="you@example.com"
+                value={form.email}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl bg-slate-700/80 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-white/5 text-sm sm:text-base"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">Password</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="••••••••"
+                value={form.password}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl bg-slate-700/80 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-white/5 text-sm sm:text-base"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isLoggingIn}
+              className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 py-3 sm:py-3.5 rounded-xl hover:from-indigo-600 hover:to-purple-700 transition font-semibold text-white shadow-lg shadow-indigo-500/25 active:scale-[0.99] text-sm sm:text-base mt-2 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+            >
+              {isLoggingIn ? (
+                <>
+                  <RefreshCw size={17} className="animate-spin" />
+                  <span>Logging in...</span>
+                </>
+              ) : (
+                <>
+                  <LogIn size={18} />
                   <span>Log In</span>
-                )}
-              </button>
-            </form>
-          )}
+                </>
+              )}
+            </button>
+          </form>
 
           <p className="text-xs sm:text-sm text-center mt-6 text-slate-300">
             Don’t have an account?{" "}

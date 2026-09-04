@@ -41,6 +41,27 @@ const INITIAL_RESOURCES = {
   }
 };
 
+const categories = [
+  { id: "all", name: "All Resources", icon: <Database size={14} /> },
+  { id: "learning", name: "Learning", icon: <BookOpen size={14} /> },
+  { id: "tools", name: "Tools", icon: <Code size={14} /> },
+  { id: "research", name: "Research", icon: <TrendingUp size={14} /> },
+  { id: "security", name: "Security", icon: <Shield size={14} /> },
+];
+
+const resourceTypes = {
+  video: { color: "bg-red-500/15 text-red-300 border border-red-500/20", icon: <Video size={13} /> },
+  ebook: { color: "bg-blue-500/15 text-blue-300 border border-blue-500/20", icon: <FileText size={13} /> },
+  interactive: { color: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/20", icon: <Code size={13} /> },
+  course: { color: "bg-purple-500/15 text-purple-300 border border-purple-500/20", icon: <BookOpen size={13} /> },
+  tool: { color: "bg-amber-500/15 text-amber-300 border border-amber-500/20", icon: <Code size={13} /> },
+  template: { color: "bg-indigo-500/15 text-indigo-300 border border-indigo-500/20", icon: <FileText size={13} /> },
+  guide: { color: "bg-teal-500/15 text-teal-300 border border-teal-500/20", icon: <BookOpen size={13} /> },
+  library: { color: "bg-pink-500/15 text-pink-300 border border-pink-500/20", icon: <Database size={13} /> },
+  paper: { color: "bg-slate-500/15 text-slate-300 border border-slate-500/20", icon: <FileText size={13} /> },
+  report: { color: "bg-cyan-500/15 text-cyan-300 border border-cyan-500/20", icon: <TrendingUp size={13} /> },
+};
+
 const getStoredResources = () => {
   try {
     const data = localStorage.getItem("highron_resources_store");

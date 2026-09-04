@@ -8,6 +8,12 @@ import {
   Cpu, Lock, X, UploadCloud, PlayCircle, Film, Trash2
 } from "lucide-react";
 
+import { 
+  fetchSupabaseResources, 
+  saveSupabaseResource, 
+  deleteSupabaseResource 
+} from "../utils/supabaseClient";
+
 const ADMIN_EMAIL = "ronaldsneekord002@gmail.com";
 const PUBSUB_TOPIC = "highron_tech_community_live_stream_v1";
 const PUBSUB_HTTP = `https://ntfy.sh/${PUBSUB_TOPIC}`;
@@ -112,6 +118,31 @@ export default function ResourcesPage() {
   const [aiResult, setAiResult] = useState(null);
 
   const fileInputRef = useRef(null);
+
+  // Load persistent resources from Supabase on mount
+  useEffect(() => {
+    fetchSupabaseResources().then(remoteResources => {
+      if (remoteResources && Object.keys(remoteResources).length > 0) {
+        setResources(prev => {
+          const merged = { ...prev };
+          Object.keys(remoteResources).forEach(cat => {
+            if (!merged[cat]) {
+              merged[cat] = remoteResources[cat];
+            } else {
+              const existingIds = new Set(merged[cat].items.map(i => i.id));
+              const newItems = remoteResources[cat].items.filter(i => !existingIds.has(i.id));
+              merged[cat] = {
+                ...merged[cat],
+                items: [...newItems, ...merged[cat].items]
+              };
+            }
+          });
+          localStorage.setItem("highron_resources_store", JSON.stringify(merged));
+          return merged;
+        });
+      }
+    });
+  }, []);
 
   // Real-time synchronization for resources across devices
   useEffect(() => {
@@ -259,6 +290,9 @@ export default function ResourcesPage() {
         body: JSON.stringify({ type: "DELETE_RESOURCE", payload: resourceId })
       }).catch(err => console.warn(err));
 
+      // Delete from Supabase persistent database
+      deleteSupabaseResource(resourceId).catch(err => console.warn("Supabase resource delete error:", err));
+
       if (viewingResource?.id === resourceId) {
         setViewingResource(null);
       }
@@ -381,6 +415,9 @@ export default function ResourcesPage() {
           }
         })
       }).catch(err => console.warn("Resource broadcast error:", err));
+
+      // Save to Supabase persistent database
+      saveSupabaseResource(newResourceItem, targetCategory).catch(err => console.warn("Supabase resource save error:", err));
 
       return updated;
     });

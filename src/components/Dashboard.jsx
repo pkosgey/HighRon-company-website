@@ -22,6 +22,15 @@ import {
   Paperclip
 } from "lucide-react";
 
+import { 
+  fetchSupabaseMessages, 
+  saveSupabaseMessage, 
+  deleteSupabaseMessage, 
+  fetchSupabaseChannels, 
+  saveSupabaseChannel, 
+  deleteSupabaseChannel 
+} from "../utils/supabaseClient";
+
 // Default channels
 const DEFAULT_CHANNELS = ["general", "tech", "security", "random"];
 const ADMIN_EMAIL = "ronaldsneekord002@gmail.com";
@@ -239,6 +248,30 @@ export default function Dashboard() {
     };
 
     fetchPastGlobalMessages();
+
+    // Fetch persisted data from Supabase
+    fetchSupabaseMessages().then(dbMsgs => {
+      if (dbMsgs && dbMsgs.length > 0) {
+        setMessages(prev => {
+          const existingIds = new Set(prev.map(m => m.id));
+          const newToAdd = dbMsgs.filter(m => !existingIds.has(m.id));
+          if (newToAdd.length === 0) return prev;
+          const combined = [...prev, ...newToAdd].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+          localStorage.setItem("highron_chat_messages", JSON.stringify(combined));
+          return combined;
+        });
+      }
+    });
+
+    fetchSupabaseChannels().then(dbChans => {
+      if (dbChans && dbChans.length > 0) {
+        setChannels(prev => {
+          const combined = Array.from(new Set([...prev, ...dbChans]));
+          localStorage.setItem("highron_channels", JSON.stringify(combined));
+          return combined;
+        });
+      }
+    });
 
     const connectGlobalWs = () => {
       if (!isMounted) return;
@@ -515,7 +548,10 @@ export default function Dashboard() {
       // 2. Broadcast globally to all other devices, tabs, and sessions
       broadcastGlobalEvent("CHAT_MESSAGE", messageData);
 
-      // 3. Send via socket if connected
+      // 3. Persist to Supabase Database
+      saveSupabaseMessage(messageData);
+
+      // 4. Send via socket if connected
       if (socketRef.current && socketRef.current.connected) {
         socketRef.current.emit("chatMessage", messageData);
       }
@@ -541,6 +577,9 @@ export default function Dashboard() {
 
       // Broadcast new channel to all connected devices & tabs
       broadcastGlobalEvent("ADD_CHANNEL", cleanName);
+
+      // Persist to Supabase
+      saveSupabaseChannel(cleanName);
 
       setActiveChannel(cleanName);
     } else if (channels.includes(cleanName)) {
@@ -572,6 +611,7 @@ export default function Dashboard() {
       });
 
       broadcastGlobalEvent("DELETE_CHANNEL", channelToDelete);
+      deleteSupabaseChannel(channelToDelete);
 
       if (activeChannel === channelToDelete) {
         setActiveChannel("general");
@@ -593,6 +633,7 @@ export default function Dashboard() {
       });
 
       broadcastGlobalEvent("DELETE_MESSAGE", messageId);
+      deleteSupabaseMessage(messageId);
     }
   };
 
@@ -610,7 +651,10 @@ export default function Dashboard() {
         return remaining;
       });
 
-      msgsToDelete.forEach(m => broadcastGlobalEvent("DELETE_MESSAGE", m.id));
+      msgsToDelete.forEach(m => {
+        broadcastGlobalEvent("DELETE_MESSAGE", m.id);
+        deleteSupabaseMessage(m.id);
+      });
     }
   };
 

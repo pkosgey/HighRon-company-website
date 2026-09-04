@@ -1,0 +1,3 @@
+# Ignore backend directory and standalone express server during frontend Vercel build
+server/
+server.js

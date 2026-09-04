@@ -11,8 +11,7 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false
   },
-  // Add this for Vercel deployment
-  base: './',
+  base: '/',
   define: {
     'process.env': {}
   }

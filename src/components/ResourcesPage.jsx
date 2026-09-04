@@ -1,12 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Search, Star, Clock, Users, BookOpen, Code, Shield, 
   TrendingUp, Video, FileText, Database, ArrowLeft, LogOut, 
   Sparkles, Eye, Plus, ShieldCheck, CheckCircle, 
-  Cpu, Lock, X, UploadCloud, PlayCircle, Film
+  Cpu, Lock, X, UploadCloud, PlayCircle, Film, Trash2
 } from "lucide-react";
+
+const ADMIN_EMAIL = "ronaldsneekord002@gmail.com";
+const PUBSUB_TOPIC = "highron_tech_community_live_stream_v1";
+const PUBSUB_HTTP = `https://ntfy.sh/${PUBSUB_TOPIC}`;
+const PUBSUB_WS = `wss://ntfy.sh/${PUBSUB_TOPIC}/ws`;
 
 const INITIAL_RESOURCES = {
   learning: {
@@ -78,11 +83,8 @@ export default function ResourcesPage() {
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const user = sessionUser || storedUser;
 
-  // Check if current user is admin (specifically checking ronaldsneekord002@gmail.com or role: admin)
-  const isAdmin = Boolean(
-    user?.email?.trim().toLowerCase() === "ronaldsneekord002@gmail.com" ||
-    user?.role === "admin"
-  );
+  // Strict Admin Authorization Check: ONLY ronaldsneekord002@gmail.com is admin
+  const isAdmin = Boolean(user?.email?.trim().toLowerCase() === ADMIN_EMAIL);
 
   const [resources, setResources] = useState(getStoredResources);
   const [searchTerm, setSearchTerm] = useState("");
@@ -110,6 +112,158 @@ export default function ResourcesPage() {
   const [aiResult, setAiResult] = useState(null);
 
   const fileInputRef = useRef(null);
+
+  // Real-time synchronization for resources across devices
+  useEffect(() => {
+    let ws = null;
+    let reconnectTimer = null;
+    let isMounted = true;
+
+    // Fetch past additions/deletions from past 48h
+    const fetchPastResourceUpdates = async () => {
+      try {
+        const res = await fetch(`${PUBSUB_HTTP}/json?poll=1&since=48h`);
+        if (res.ok) {
+          const text = await res.text();
+          const lines = text.trim().split("\n");
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            try {
+              const item = JSON.parse(line);
+              if (item.event === "message" && item.message) {
+                const packet = JSON.parse(item.message);
+                if (packet.type === "ADD_RESOURCE" && packet.payload) {
+                  const { category, item: resItem } = packet.payload;
+                  setResources(prev => {
+                    const cat = category in prev ? category : "learning";
+                    if (prev[cat]?.items?.some(i => i.id === resItem.id)) return prev;
+                    const updated = {
+                      ...prev,
+                      [cat]: {
+                        ...prev[cat],
+                        items: [resItem, ...prev[cat].items]
+                      }
+                    };
+                    localStorage.setItem("highron_resources_store", JSON.stringify(updated));
+                    return updated;
+                  });
+                } else if (packet.type === "DELETE_RESOURCE" && packet.payload) {
+                  const resourceId = packet.payload;
+                  setResources(prev => {
+                    const updated = {};
+                    Object.keys(prev).forEach(cat => {
+                      updated[cat] = {
+                        ...prev[cat],
+                        items: prev[cat].items.filter(i => i.id !== resourceId)
+                      };
+                    });
+                    localStorage.setItem("highron_resources_store", JSON.stringify(updated));
+                    return updated;
+                  });
+                }
+              }
+            } catch (err) {}
+          }
+        }
+      } catch (err) {}
+    };
+
+    fetchPastResourceUpdates();
+
+    const connectWs = () => {
+      if (!isMounted) return;
+      try {
+        ws = new WebSocket(PUBSUB_WS);
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.event === "message" && data.message) {
+              const packet = JSON.parse(data.message);
+              if (packet.type === "ADD_RESOURCE" && packet.payload) {
+                const { category, item: resItem } = packet.payload;
+                setResources(prev => {
+                  const cat = category in prev ? category : "learning";
+                  if (prev[cat]?.items?.some(i => i.id === resItem.id)) return prev;
+                  const updated = {
+                    ...prev,
+                    [cat]: {
+                      ...prev[cat],
+                      items: [resItem, ...prev[cat].items]
+                    }
+                  };
+                  localStorage.setItem("highron_resources_store", JSON.stringify(updated));
+                  return updated;
+                });
+              } else if (packet.type === "DELETE_RESOURCE" && packet.payload) {
+                const resourceId = packet.payload;
+                setResources(prev => {
+                  const updated = {};
+                  Object.keys(prev).forEach(cat => {
+                    updated[cat] = {
+                      ...prev[cat],
+                      items: prev[cat].items.filter(i => i.id !== resourceId)
+                    };
+                  });
+                  localStorage.setItem("highron_resources_store", JSON.stringify(updated));
+                  return updated;
+                });
+              }
+            }
+          } catch (e) {}
+        };
+        ws.onclose = () => {
+          if (isMounted) {
+            reconnectTimer = setTimeout(connectWs, 3000);
+          }
+        };
+        ws.onerror = () => ws?.close();
+      } catch (err) {
+        if (isMounted) {
+          reconnectTimer = setTimeout(connectWs, 3000);
+        }
+      }
+    };
+
+    connectWs();
+
+    return () => {
+      isMounted = false;
+      clearTimeout(reconnectTimer);
+      ws?.close();
+    };
+  }, []);
+
+  const handleDeleteResource = (resourceId, resourceName, e) => {
+    e?.stopPropagation();
+    if (!isAdmin) {
+      alert(`Access Restricted: Only the administrator (${ADMIN_EMAIL}) is permitted to delete resources.`);
+      return;
+    }
+
+    if (window.confirm(`Admin: Are you sure you want to permanently delete "${resourceName}"?`)) {
+      setResources(prev => {
+        const updated = {};
+        Object.keys(prev).forEach(cat => {
+          updated[cat] = {
+            ...prev[cat],
+            items: prev[cat].items.filter(item => item.id !== resourceId && item.name !== resourceName)
+          };
+        });
+        localStorage.setItem("highron_resources_store", JSON.stringify(updated));
+        return updated;
+      });
+
+      // Broadcast delete to all devices
+      fetch(PUBSUB_HTTP, {
+        method: "POST",
+        body: JSON.stringify({ type: "DELETE_RESOURCE", payload: resourceId })
+      }).catch(err => console.warn(err));
+
+      if (viewingResource?.id === resourceId) {
+        setViewingResource(null);
+      }
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("session_user");
@@ -215,6 +369,19 @@ export default function ResourcesPage() {
         }
       };
       localStorage.setItem("highron_resources_store", JSON.stringify(updated));
+
+      // Broadcast newly created resource globally to all devices
+      fetch(PUBSUB_HTTP, {
+        method: "POST",
+        body: JSON.stringify({
+          type: "ADD_RESOURCE",
+          payload: {
+            category: targetCategory,
+            item: newResourceItem
+          }
+        })
+      }).catch(err => console.warn("Resource broadcast error:", err));
+
       return updated;
     });
 
@@ -349,12 +516,12 @@ export default function ResourcesPage() {
           </div>
 
           {/* Category Tabs */}
-          <div className="flex flex-wrap gap-2 items-center">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar flex-nowrap sm:flex-wrap">
             {categories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition shrink-0 ${
                   selectedCategory === cat.id
                     ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/20"
                     : "bg-slate-800/60 text-slate-400 hover:text-white hover:bg-slate-800"
@@ -416,14 +583,25 @@ export default function ResourcesPage() {
                   </span>
                 </div>
 
-                {/* Open in Interactive Reader Modal - NO DOWNLOADING */}
-                <button
-                  onClick={() => setViewingResource(resource)}
-                  className="w-full bg-slate-800/90 hover:bg-indigo-600 text-slate-200 hover:text-white py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 text-xs group-hover:shadow-md group-hover:shadow-indigo-600/20 border border-white/5 cursor-pointer"
-                >
-                  <Eye size={15} />
-                  <span>Read / Study Online</span>
-                </button>
+                {/* Open in Interactive Reader Modal & Admin Delete */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setViewingResource(resource)}
+                    className="flex-1 bg-slate-800/90 hover:bg-indigo-600 text-slate-200 hover:text-white py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 text-xs group-hover:shadow-md group-hover:shadow-indigo-600/20 border border-white/5 cursor-pointer"
+                  >
+                    <Eye size={15} />
+                    <span>Read / Study Online</span>
+                  </button>
+                  {isAdmin && (
+                    <button
+                      onClick={(e) => handleDeleteResource(resource.id, resource.name, e)}
+                      className="p-2.5 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 transition cursor-pointer"
+                      title="Delete Resource (Admin)"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -519,14 +697,26 @@ export default function ResourcesPage() {
               </div>
 
               {/* Modal Footer */}
-              <div className="px-6 py-3.5 border-t border-white/10 flex items-center justify-between bg-slate-800/40">
-                <span className="text-xs text-slate-400">Status: Active Study Session</span>
-                <button
-                  onClick={() => setViewingResource(null)}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition"
-                >
-                  Close Viewer
-                </button>
+              <div className="px-4 sm:px-6 py-3.5 border-t border-white/10 flex items-center justify-between bg-slate-800/40 gap-2">
+                <span className="text-xs text-slate-400 truncate">Status: Active Study Session</span>
+                <div className="flex items-center gap-2 shrink-0">
+                  {isAdmin && (
+                    <button
+                      onClick={(e) => handleDeleteResource(viewingResource.id, viewingResource.name, e)}
+                      className="px-3 sm:px-4 py-2 bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white rounded-xl text-xs font-semibold border border-red-500/30 transition flex items-center gap-1.5 cursor-pointer"
+                      title="Delete Resource (Admin)"
+                    >
+                      <Trash2 size={14} />
+                      <span>Delete Resource</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setViewingResource(null)}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition cursor-pointer"
+                  >
+                    Close Viewer
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>

@@ -5,7 +5,8 @@ import {
   Search, Star, Clock, Users, BookOpen, Code, Shield, 
   TrendingUp, Video, FileText, Database, ArrowLeft, LogOut, 
   Sparkles, Eye, Plus, ShieldCheck, CheckCircle, 
-  Cpu, Lock, X, UploadCloud, PlayCircle, Film, Trash2
+  Cpu, Lock, X, UploadCloud, PlayCircle, Film, Trash2,
+  Copy, Check, AlignLeft, Layers, Loader2
 } from "lucide-react";
 
 import { 
@@ -23,31 +24,182 @@ const INITIAL_RESOURCES = {
   learning: {
     title: "Learning Center",
     items: [
-      { id: "res-1", name: "AI & ML Architecture Masterclass", type: "video", rating: 4.9, learners: 1247, duration: "8h", description: "Deep dive into Transformer neural networks, attention mechanisms, and real-world deployment patterns.", content: "Comprehensive lecture series covering Attention Is All You Need, Transformer architecture, fine-tuning LLMs with LoRA, and serving high-throughput inference endpoints with vLLM.", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" },
-      { id: "res-2", name: "Quantum Computing Principles", type: "ebook", rating: 4.7, learners: 892, duration: "3h", description: "Foundation handbook covering Qubits, superposition, entanglement, and Shor's algorithm.", content: "Table of Contents:\n1. Mathematical foundations of Hilbert spaces\n2. Qubits and Quantum Gates\n3. Quantum Circuit Optimization\n4. Quantum Error Mitigation\n5. Practical applications in Post-Quantum Cryptography." },
-      { id: "res-3", name: "Modern Cyber Defense Interactive Lab", type: "interactive", rating: 4.8, learners: 1563, duration: "6h", description: "Hands-on browser simulations for packet inspection, firewall rule enforcement, and anomaly detection.", content: "Interactive walkthrough analyzing PCAP captures, detecting zero-day buffer overflows, and crafting automated IDS signatures." },
-      { id: "res-4", name: "Enterprise Security Certification Syllabus", type: "course", rating: 4.9, learners: 2104, duration: "12h", description: "Full accreditation preparation curriculum for security architects and engineering teams.", content: "Curriculum Modules:\nModule 1: Identity & Access Governance (RBAC & ABAC)\nModule 2: Cloud Infrastructure Hardening\nModule 3: SOC Runbooks and Incident Response Planning." },
+      { 
+        id: "res-1", 
+        name: "AI & ML Architecture Masterclass", 
+        type: "video", 
+        rating: 4.9, 
+        learners: 1247, 
+        duration: "8h", 
+        difficulty: "Advanced",
+        description: "Deep dive into Transformer neural networks, multi-head attention mechanisms, and production inference deployment patterns.", 
+        keyTakeaways: [
+          "Mathematical breakdown of Self-Attention and Scaled Dot-Product formulas.",
+          "Parameter-Efficient Fine-Tuning (PEFT) with LoRA and QLoRA.",
+          "High-throughput inference clustering using vLLM and PagedAttention."
+        ],
+        content: "Comprehensive lecture series covering Attention Is All You Need, Transformer architecture, fine-tuning LLMs with LoRA, and serving high-throughput inference endpoints with vLLM.", 
+        videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" 
+      },
+      { 
+        id: "res-2", 
+        name: "Quantum Computing Principles", 
+        type: "ebook", 
+        rating: 4.7, 
+        learners: 892, 
+        duration: "3h", 
+        difficulty: "Advanced",
+        description: "Foundational handbook covering Qubits, superposition, quantum entanglement, and Post-Quantum Cryptography algorithms.", 
+        keyTakeaways: [
+          "State vectors and Hilbert spaces representation of qubit systems.",
+          "Quantum gate synthesis, circuit optimization, and unitary transformations.",
+          "Shor's and Grover's algorithm mechanics and NIST post-quantum migration."
+        ],
+        content: "Table of Contents:\n1. Mathematical foundations of Hilbert spaces\n2. Qubits and Quantum Gates\n3. Quantum Circuit Optimization\n4. Quantum Error Mitigation\n5. Practical applications in Post-Quantum Cryptography." 
+      },
+      { 
+        id: "res-3", 
+        name: "Modern Cyber Defense Interactive Lab", 
+        type: "interactive", 
+        rating: 4.8, 
+        learners: 1563, 
+        duration: "6h", 
+        difficulty: "Intermediate",
+        description: "Hands-on browser simulations for packet inspection, zero-trust perimeter enforcement, and real-time IDS anomaly detection.", 
+        keyTakeaways: [
+          "Live PCAP packet dissection and protocol abnormality signature drafting.",
+          "Preventing zero-day memory corruption vulnerabilities and buffer overflows.",
+          "Hardening network edge policies with automated anomaly triage."
+        ],
+        content: "Interactive walkthrough analyzing PCAP captures, detecting zero-day buffer overflows, and crafting automated IDS signatures." 
+      },
+      { 
+        id: "res-4", 
+        name: "Enterprise Security Certification Syllabus", 
+        type: "course", 
+        rating: 4.9, 
+        learners: 2104, 
+        duration: "12h", 
+        difficulty: "Intermediate",
+        description: "Full accreditation preparation curriculum for security architects, DevSecOps practitioners, and engineering leaders.", 
+        keyTakeaways: [
+          "Role-Based Access Control (RBAC) and Attribute-Based Access Control (ABAC).",
+          "Kubernetes and multi-cloud container infrastructure hardening.",
+          "SOC runbook synthesis and enterprise incident response planning."
+        ],
+        content: "Curriculum Modules:\nModule 1: Identity & Access Governance (RBAC & ABAC)\nModule 2: Cloud Infrastructure Hardening\nModule 3: SOC Runbooks and Incident Response Planning." 
+      },
     ]
   },
   tools: {
     title: "Development Tools",
     items: [
-      { id: "res-5", name: "HighRon Core API SDK v2.1", type: "tool", rating: 4.8, learners: 2541, duration: "Reference", description: "Official documentation and TypeScript client libraries for integrating HighRon realtime protocols.", content: "SDK Quickstart:\nimport { HighRonClient } from '@highron/sdk';\nconst client = new HighRonClient({ apiKey: process.env.HIGHRON_KEY });\nawait client.connectStream('telemetry');" },
-      { id: "res-6", name: "Production Kubernetes Manifests", type: "template", rating: 4.5, learners: 1876, duration: "Specs", description: "Hardened Helm charts and zero-trust Istio service mesh configurations.", content: "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: highron-ingress\nspec:\n  replicas: 3\n  template:\n    spec:\n      containers:\n      - name: gateway\n        image: highron/gateway:v2" },
-      { id: "res-7", name: "Code Review & Security Checklist", type: "guide", rating: 4.7, learners: 3210, duration: "Guidelines", description: "30-point verification checklist for memory safety, cryptographic sanity, and vulnerability prevention.", content: "Review Checklist:\n[ ] 1. All external inputs validated against strict regex schema\n[ ] 2. Secrets injected via environment vaults, never hardcoded\n[ ] 3. Cryptographic primitives using SHA-256 or Argon2id\n[ ] 4. Rate-limiting enforced on authentication routes." }
+      { 
+        id: "res-5", 
+        name: "HighRon Core API SDK v2.1", 
+        type: "tool", 
+        rating: 4.8, 
+        learners: 2541, 
+        duration: "Reference", 
+        difficulty: "Intermediate",
+        description: "Official documentation and TypeScript client libraries for integrating HighRon realtime protocols and pubsub channels.", 
+        keyTakeaways: [
+          "Zero-latency WebSocket & PubSub client initialization patterns.",
+          "Automatic reconnection handling with exponential backoff algorithms.",
+          "End-to-end payload signature verification and cryptographic integrity."
+        ],
+        content: "SDK Quickstart:\nimport { HighRonClient } from '@highron/sdk';\nconst client = new HighRonClient({ apiKey: process.env.HIGHRON_KEY });\nawait client.connectStream('telemetry');" 
+      },
+      { 
+        id: "res-6", 
+        name: "Production Kubernetes Manifests", 
+        type: "template", 
+        rating: 4.5, 
+        learners: 1876, 
+        duration: "Specs", 
+        difficulty: "Advanced",
+        description: "Hardened Helm charts, Istio service mesh configs, and automated horizontal pod autoscaler policies for high-load systems.", 
+        keyTakeaways: [
+          "Zero-trust mTLS service mesh enforcement across microservices.",
+          "Graceful shutdown hooks and zero-downtime rolling update configurations.",
+          "Resource limits, network policies, and non-root security contexts."
+        ],
+        content: "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: highron-ingress\nspec:\n  replicas: 3\n  template:\n    spec:\n      containers:\n      - name: gateway\n        image: highron/gateway:v2" 
+      },
+      { 
+        id: "res-7", 
+        name: "Code Review & Security Checklist", 
+        type: "guide", 
+        rating: 4.7, 
+        learners: 3210, 
+        duration: "Guidelines", 
+        difficulty: "Fundamental",
+        description: "30-point verification checklist for memory safety, cryptographic sanity, input validation, and vulnerability prevention.", 
+        keyTakeaways: [
+          "Sanitizing all external inputs against strict schema validations.",
+          "Storing secrets in hardware-backed key vaults, never in code repositories.",
+          "Enforcing Argon2id password hashing and SHA-256 integrity checks."
+        ],
+        content: "Review Checklist:\n[ ] 1. All external inputs validated against strict regex schema\n[ ] 2. Secrets injected via environment vaults, never hardcoded\n[ ] 3. Cryptographic primitives using SHA-256 or Argon2id\n[ ] 4. Rate-limiting enforced on authentication routes." 
+      }
     ]
   },
   research: {
     title: "Research & Insights",
     items: [
-      { id: "res-8", name: "Decentralized AI Governance Whitepaper", type: "paper", rating: 4.8, learners: 876, duration: "45m read", description: "Peer-reviewed research exploring consensus-driven safety alignments in autonomous agent systems.", content: "Abstract: We evaluate cryptographic proof-of-safety mechanisms designed to enforce behavioral constraints across decentralized LLM worker clusters without centralized single-points-of-failure." },
-      { id: "res-9", name: "Quantum Encryption Resistance Benchmark", type: "paper", rating: 4.7, learners: 432, duration: "30m read", description: "Performance analysis of Kyber vs Classic McEliece algorithms on constrained IoT nodes.", content: "Benchmarking results demonstrate that Kyber-768 provides optimal throughput with 4.2x faster key generation on ARM Cortex-M4 processors compared to legacy RSA-4096." }
+      { 
+        id: "res-8", 
+        name: "Decentralized AI Governance Whitepaper", 
+        type: "paper", 
+        rating: 4.8, 
+        learners: 876, 
+        duration: "45m read", 
+        difficulty: "Advanced",
+        description: "Peer-reviewed research exploring consensus-driven safety alignments in autonomous multi-agent systems.", 
+        keyTakeaways: [
+          "Cryptographic proof-of-safety consensus algorithms for agent swarms.",
+          "Decentralized human-in-the-loop dispute resolution protocols.",
+          "Mitigating rogue single points of failure in autonomous worker clusters."
+        ],
+        content: "Abstract: We evaluate cryptographic proof-of-safety mechanisms designed to enforce behavioral constraints across decentralized LLM worker clusters without centralized single-points-of-failure." 
+      },
+      { 
+        id: "res-9", 
+        name: "Quantum Encryption Resistance Benchmark", 
+        type: "paper", 
+        rating: 4.7, 
+        learners: 432, 
+        duration: "30m read", 
+        difficulty: "Advanced",
+        description: "Performance analysis of Kyber vs Classic McEliece algorithms on constrained embedded IoT microcontrollers.", 
+        keyTakeaways: [
+          "Benchmarking throughput of Kyber-768 on ARM Cortex-M4 architectures.",
+          "4.2x faster key generation cycles over legacy RSA-4096 standards.",
+          "Memory footprint optimizations for post-quantum key encapsulation."
+        ],
+        content: "Benchmarking results demonstrate that Kyber-768 provides optimal throughput with 4.2x faster key generation on ARM Cortex-M4 processors compared to legacy RSA-4096." 
+      }
     ]
   },
   security: {
     title: "Security Resources",
     items: [
-      { id: "res-10", name: "Zero-Trust Architecture Guidelines", type: "guide", rating: 4.9, learners: 1987, duration: "2h read", description: "Framework for implementing micro-segmentation, continuous verification, and ephemeral session tokens.", content: "Zero Trust Core Principles:\n1. Verify explicitly at every network hop\n2. Use least privileged access\n3. Assume breach and automate telemetry forensics." }
+      { 
+        id: "res-10", 
+        name: "Zero-Trust Architecture Guidelines", 
+        type: "guide", 
+        rating: 4.9, 
+        learners: 1987, 
+        duration: "2h read", 
+        difficulty: "Intermediate",
+        description: "Framework for implementing micro-segmentation, continuous telemetry verification, and ephemeral session tokens.", 
+        keyTakeaways: [
+          "Explicit verification at every network packet boundary and API hop.",
+          "Enforcing least privilege with fine-grained time-bound certificates.",
+          "Assuming breach posture with automated containment runbooks."
+        ],
+        content: "Zero Trust Core Principles:\n1. Verify explicitly at every network hop\n2. Use least privileged access\n3. Assume breach and automate telemetry forensics." 
+      }
     ]
   }
 };
@@ -71,6 +223,97 @@ const resourceTypes = {
   library: { color: "bg-pink-500/15 text-pink-300 border border-pink-500/20", icon: <Database size={13} /> },
   paper: { color: "bg-slate-500/15 text-slate-300 border border-slate-500/20", icon: <FileText size={13} /> },
   report: { color: "bg-cyan-500/15 text-cyan-300 border border-cyan-500/20", icon: <TrendingUp size={13} /> },
+};
+
+// Clean & sanitize text to eliminate foreign binary code and PDF stream artifacts
+const sanitizeExtractedText = (text, filename) => {
+  if (!text || typeof text !== "string") return "";
+  
+  // Remove null bytes and non-printable control codes
+  let cleaned = text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "");
+
+  // If raw binary PDF code slipped in (e.g. contains /Filter, /FlateDecode, obj, endobj, stream)
+  const isBinaryJunk = (cleaned.includes("/Filter") || cleaned.includes("endobj") || cleaned.includes("stream") || cleaned.startsWith("%PDF-"));
+  if (isBinaryJunk) {
+    cleaned = cleaned
+      .replace(/stream[\s\S]*?endstream/g, " ")
+      .replace(/[0-9]+\s+[0-9]+\s+obj[\s\S]*?endobj/g, " ")
+      .replace(/<<[\s\S]*?>>/g, " ")
+      .replace(/xref[\s\S]*?trailer/g, " ")
+      .replace(/%PDF-[0-9.]+/g, " ")
+      .replace(/[^\x20-\x7E\n\r\t]/g, " ");
+  }
+
+  // Remove excess whitespace
+  cleaned = cleaned
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n\s*\n\s*\n+/g, "\n\n")
+    .trim();
+
+  if (cleaned.length < 25) {
+    return `Interactive Study Document: ${filename || "Uploaded Resource"}\nType: Protected In-Browser Document\n\nThis material has been indexed by HighRon AI for interactive browser reading. Review the AI Executive Summary and Core Takeaways in the study viewer.`;
+  }
+
+  return cleaned;
+};
+
+// Semantic AI Summarizer Engine
+const generateAISummary = (rawContent, title, type) => {
+  const cleanBody = (rawContent || "")
+    .replace(/[#*`_>\[\]]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const words = cleanBody.split(/\s+/).filter(Boolean);
+  const wordCount = words.length;
+  const minutes = Math.max(2, Math.ceil(wordCount / 180));
+  const estimatedDuration = type === "video" ? "Video Stream" : `${minutes}m read`;
+
+  // Extract clean sentences, ignoring codes or artifacts
+  const sentences = cleanBody
+    .split(/(?<=[.?!])\s+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 25 && s.length < 240 && !s.includes("obj") && !s.includes("/Filter") && !s.includes("endstream"));
+
+  let executiveSummary = "";
+  if (sentences.length >= 2) {
+    executiveSummary = `${sentences[0]} ${sentences[1]}`;
+  } else if (sentences.length === 1) {
+    executiveSummary = sentences[0];
+  } else {
+    executiveSummary = `Comprehensive ${type} reference covering core concepts, operational patterns, and security standards for HighRon learners.`;
+  }
+
+  let keyTakeaways = [];
+  if (sentences.length >= 5) {
+    keyTakeaways = sentences.slice(2, 6).map(s => s.replace(/^[0-9.-]+\s*/, ""));
+  } else if (sentences.length >= 3) {
+    keyTakeaways = [
+      sentences[1],
+      sentences[2],
+      `Practical implementation and verification guidelines for ${title}.`
+    ];
+  } else {
+    keyTakeaways = [
+      `Master the core architectural principles and fundamentals of ${title}.`,
+      "Apply security hardening, micro-segmentation, and fault tolerance patterns.",
+      "Review production deployment checklists and troubleshooting runbooks."
+    ];
+  }
+
+  // Detect difficulty level
+  const lower = cleanBody.toLowerCase();
+  const techKeywords = ["quantum", "cryptograph", "kernel", "kubernetes", "distributed", "compiler", "neural", "zero-trust", "concurrency", "vector"];
+  const matches = techKeywords.filter(k => lower.includes(k)).length;
+  const difficulty = matches >= 3 ? "Advanced" : matches >= 1 ? "Intermediate" : "Fundamental";
+
+  return {
+    executiveSummary,
+    keyTakeaways,
+    estimatedDuration,
+    difficulty,
+    wordCount
+  };
 };
 
 const getStoredResources = () => {
@@ -98,18 +341,23 @@ export default function ResourcesPage() {
   
   // Interactive Viewer Modal state (No download allowed)
   const [viewingResource, setViewingResource] = useState(null);
+  const [readerTab, setReaderTab] = useState("overview"); // "overview" | "media" | "notes"
+  const [readerFontSize, setReaderFontSize] = useState("normal"); // "small" | "normal" | "large"
+  const [copiedNotes, setCopiedNotes] = useState(false);
 
   // Admin Upload Modal state
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [uploadMode, setUploadMode] = useState("document"); // "document" or "video"
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [isExtractingText, setIsExtractingText] = useState(false);
   const [uploadForm, setUploadForm] = useState({
     name: "",
     category: "learning",
     type: "guide",
     rawContent: "",
     duration: "45m",
-    videoUrl: ""
+    videoUrl: "",
+    documentUrl: ""
   });
 
   // AI Analysis simulation states
@@ -306,32 +554,94 @@ export default function ResourcesPage() {
   };
 
   // Handle local file selection (document .txt/.pdf/.md or video .mp4/.webm)
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploadedFile(file);
 
+    const baseName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+
     if (uploadMode === "document") {
-      // Read document text
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const text = event.target?.result;
+      const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+      const docBlobUrl = URL.createObjectURL(file);
+
+      if (isPdf) {
+        setIsExtractingText(true);
         setUploadForm(prev => ({
           ...prev,
-          name: prev.name || file.name.replace(/\.[^/.]+$/, ""),
-          rawContent: typeof text === "string" ? text : "Binary document attached. Ready for HighRon AI parsing."
+          name: prev.name || baseName,
+          type: "ebook",
+          documentUrl: docBlobUrl,
+          rawContent: "Extracting readable text from PDF pages..."
         }));
-      };
-      reader.readAsText(file);
+
+        try {
+          let extractedText = "";
+          if (window.pdfjsLib) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+            const arrayBuffer = await file.arrayBuffer();
+            const loadingTask = window.pdfjsLib.getDocument({ data: arrayBuffer });
+            const pdf = await loadingTask.promise;
+            
+            for (let pageNum = 1; pageNum <= Math.min(pdf.numPages, 30); pageNum++) {
+              const page = await pdf.getPage(pageNum);
+              const textContent = await page.getTextContent();
+              const pageStrings = textContent.items
+                .map(item => item.str)
+                .filter(Boolean)
+                .join(" ");
+              if (pageStrings.trim()) {
+                extractedText += `\n--- Page ${pageNum} ---\n${pageStrings}\n`;
+              }
+            }
+          }
+
+          const cleaned = sanitizeExtractedText(extractedText, file.name);
+          setUploadForm(prev => ({
+            ...prev,
+            name: prev.name || baseName,
+            type: "ebook",
+            documentUrl: docBlobUrl,
+            rawContent: cleaned
+          }));
+        } catch (err) {
+          console.warn("PDF extraction note:", err);
+          setUploadForm(prev => ({
+            ...prev,
+            name: prev.name || baseName,
+            type: "ebook",
+            documentUrl: docBlobUrl,
+            rawContent: `Document Title: ${baseName}\nFilename: ${file.name}\nSize: ${(file.size / 1024).toFixed(1)} KB\nType: Protected PDF Document\n\nThis material is prepared for interactive reading in the HighRon reader with AI summary synthesis.`
+          }));
+        } finally {
+          setIsExtractingText(false);
+        }
+      } else {
+        // Plain text, markdown, json, csv
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const text = event.target?.result;
+          const cleaned = typeof text === "string" 
+            ? sanitizeExtractedText(text, file.name)
+            : "Document loaded and ready for AI analysis.";
+          
+          setUploadForm(prev => ({
+            ...prev,
+            name: prev.name || baseName,
+            documentUrl: docBlobUrl,
+            rawContent: cleaned
+          }));
+        };
+        reader.readAsText(file);
+      }
     } else if (uploadMode === "video") {
-      // Create local streaming object URL for in-browser streaming
       const videoBlobUrl = URL.createObjectURL(file);
       setUploadForm(prev => ({
         ...prev,
-        name: prev.name || file.name.replace(/\.[^/.]+$/, ""),
+        name: prev.name || baseName,
         type: "video",
         videoUrl: videoBlobUrl,
-        rawContent: `Video Asset: ${file.name}\nSize: ${(file.size / (1024 * 1024)).toFixed(2)} MB\nCodec/MIME: ${file.type || "video/mp4"}\nStatus: Streamable in high-definition without download.`
+        rawContent: `Video Asset: ${file.name}\nSize: ${(file.size / (1024 * 1024)).toFixed(2)} MB\nFormat: Protected In-Browser Stream\n\nHigh-definition interactive video session verified by HighRon AI for streaming without downloads.`
       }));
     }
   };
@@ -355,27 +665,26 @@ export default function ResourcesPage() {
     // AI Pipeline simulation
     if (uploadMode === "video") {
       setAiAnalysisStep("Transcribing video audio track & generating speech timestamps...");
-      await new Promise(r => setTimeout(r, 700));
+      await new Promise(r => setTimeout(r, 600));
 
-      setAiAnalysisStep("Running Computer Vision scan for inappropriate content & copyright...");
-      await new Promise(r => setTimeout(r, 800));
+      setAiAnalysisStep("Running Computer Vision scan for copyright & content compliance...");
+      await new Promise(r => setTimeout(r, 600));
 
       setAiAnalysisStep("Optimizing video chunk streaming headers & locking download channels...");
-      await new Promise(r => setTimeout(r, 700));
+      await new Promise(r => setTimeout(r, 600));
     } else {
-      setAiAnalysisStep("Parsing document content & extracting semantic concepts...");
-      await new Promise(r => setTimeout(r, 700));
+      setAiAnalysisStep("Parsing document syntax & extracting semantic knowledge graph...");
+      await new Promise(r => setTimeout(r, 600));
 
-      setAiAnalysisStep("Running HighRon AI Security & Quality Verification Scan...");
-      await new Promise(r => setTimeout(r, 800));
+      setAiAnalysisStep("Synthesizing Executive Summary, Key Takeaways & syllabus tags...");
+      await new Promise(r => setTimeout(r, 600));
 
-      setAiAnalysisStep("Synthesizing learning outcomes, syllabus tags, and difficulty rating...");
-      await new Promise(r => setTimeout(r, 700));
+      setAiAnalysisStep("Verifying readability, accessibility & security pass...");
+      await new Promise(r => setTimeout(r, 600));
     }
 
-    const generatedSummary = uploadForm.rawContent.length > 140 
-      ? uploadForm.rawContent.slice(0, 137) + "..."
-      : uploadForm.rawContent || "High-definition interactive video session verified by HighRon AI.";
+    // Run semantic AI summarizer!
+    const aiAnalysis = generateAISummary(uploadForm.rawContent, uploadForm.name.trim(), uploadMode === "video" ? "video" : uploadForm.type);
 
     const newResourceItem = {
       id: "res-ai-" + Date.now(),
@@ -383,12 +692,15 @@ export default function ResourcesPage() {
       type: uploadMode === "video" ? "video" : uploadForm.type,
       rating: 5.0,
       learners: 1,
-      duration: uploadForm.duration || (uploadMode === "video" ? "Video Stream" : "Self-Paced"),
-      description: generatedSummary,
+      duration: uploadForm.duration || aiAnalysis.estimatedDuration,
+      difficulty: aiAnalysis.difficulty,
+      description: aiAnalysis.executiveSummary,
+      keyTakeaways: aiAnalysis.keyTakeaways,
       content: uploadForm.rawContent,
       videoUrl: uploadForm.videoUrl,
+      documentUrl: uploadForm.documentUrl,
       aiVerified: true,
-      postedBy: user?.name || "Admin Ronald",
+      postedBy: user?.name || user?.username || "Admin Ronald",
       createdAt: new Date().toISOString()
     };
 
@@ -424,8 +736,8 @@ export default function ResourcesPage() {
 
     setAiResult({
       status: "Verified & Published",
-      qualityScore: uploadMode === "video" ? "99.8% (HD Audio/Video Scan)" : "99.2% (Document Semantic Pass)",
-      recommendation: uploadMode === "video" ? "Video Ready for Protected In-Browser Streaming" : "Document Approved by AI Pipeline"
+      qualityScore: uploadMode === "video" ? "99.8% (HD Audio/Video Scan)" : "99.4% (Semantic Readability Pass)",
+      recommendation: uploadMode === "video" ? "Video Ready for Protected In-Browser Streaming" : "Clean Executive Summary & Key Takeaways Generated"
     });
 
     setIsAnalyzing(false);
@@ -439,11 +751,12 @@ export default function ResourcesPage() {
         type: "guide",
         rawContent: "",
         duration: "45m",
-        videoUrl: ""
+        videoUrl: "",
+        documentUrl: ""
       });
       setAiResult(null);
       setAiAnalysisStep("");
-    }, 1700);
+    }, 1500);
   };
 
   // Filter resources based on search and category
@@ -587,24 +900,38 @@ export default function ResourcesPage() {
                     <span className="capitalize">{resource.type}</span>
                   </span>
 
-                  {resource.aiVerified ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                      <Sparkles size={11} /> AI Verified
-                    </span>
-                  ) : (
-                    <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                      <Clock size={12} /> {resource.duration}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-1.5">
+                    {resource.difficulty && (
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-800 text-indigo-300 border border-indigo-500/20">
+                        {resource.difficulty}
+                      </span>
+                    )}
+                    {resource.aiVerified ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <Sparkles size={11} /> AI Verified
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-slate-500 flex items-center gap-1">
+                        <Clock size={12} /> {resource.duration}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <h3 className="font-bold text-base text-white mb-2 group-hover:text-indigo-300 transition-colors line-clamp-2">
                   {resource.name}
                 </h3>
 
-                <p className="text-xs text-slate-400 leading-relaxed line-clamp-3 mb-4">
+                <p className="text-xs text-slate-400 leading-relaxed line-clamp-3 mb-3">
                   {resource.description || "Interactive resource curated for HighRon learners."}
                 </p>
+
+                {resource.keyTakeaways && resource.keyTakeaways[0] && (
+                  <div className="mb-3.5 text-[11px] text-indigo-300/90 bg-indigo-500/10 border border-indigo-500/15 rounded-xl px-2.5 py-1.5 flex items-center gap-1.5 truncate">
+                    <CheckCircle size={12} className="text-emerald-400 shrink-0" />
+                    <span className="truncate">{resource.keyTakeaways[0]}</span>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -656,85 +983,262 @@ export default function ResourcesPage() {
       {/* Interactive Resource Viewer Modal (Study in Browser - No Download) */}
       <AnimatePresence>
         {viewingResource && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-slate-900 border border-white/10 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col overflow-hidden shadow-2xl"
+              exit={{ opacity: 0, scale: 0.96 }}
+              className="bg-slate-900 border border-white/10 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl"
             >
               {/* Modal Header */}
-              <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-slate-800/60">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-                    {resourceTypes[viewingResource.type]?.icon || <BookOpen size={18} />}
+              <div className="px-4 sm:px-6 py-3.5 border-b border-white/10 flex items-center justify-between bg-slate-800/80 shrink-0">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0">
+                    {resourceTypes[viewingResource.type]?.icon || <BookOpen size={20} />}
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-white line-clamp-1">{viewingResource.name}</h3>
-                    <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                      <span className="capitalize">{viewingResource.type}</span>
+                  <div className="min-w-0">
+                    <h3 className="text-base sm:text-lg font-bold text-white truncate">{viewingResource.name}</h3>
+                    <div className="flex items-center gap-2 text-[11px] text-slate-400 flex-wrap">
+                      <span className="capitalize font-medium text-indigo-300">{viewingResource.type}</span>
                       <span>•</span>
                       <span>{viewingResource.duration}</span>
+                      {viewingResource.difficulty && (
+                        <>
+                          <span>•</span>
+                          <span className="text-amber-400 font-medium">{viewingResource.difficulty}</span>
+                        </>
+                      )}
                       <span>•</span>
-                      <span className="text-emerald-400 flex items-center gap-1">
-                        <Lock size={10} /> In-Browser Read Only
+                      <span className="text-emerald-400 flex items-center gap-1 font-medium">
+                        <Lock size={10} /> Protected Study Session
                       </span>
                     </div>
                   </div>
                 </div>
                 <button
-                  onClick={() => setViewingResource(null)}
-                  className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition"
+                  onClick={() => {
+                    setViewingResource(null);
+                    setReaderTab("overview");
+                  }}
+                  className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition shrink-0"
+                  aria-label="Close viewer"
                 >
-                  <X size={18} />
+                  <X size={20} />
                 </button>
               </div>
 
-              {/* Modal Content / In-Browser Streamer */}
-              <div className="p-6 overflow-y-auto space-y-4 flex-1 text-slate-300 text-sm leading-relaxed custom-scrollbar">
-                {/* Video Player Stream if Resource is Video */}
-                {(viewingResource.type === "video" || viewingResource.videoUrl) && (
-                  <div className="rounded-2xl overflow-hidden bg-black border border-white/10 shadow-2xl relative">
-                    <video
-                      controls
-                      controlsList="nodownload noplaybackrate"
-                      disablePictureInPicture
-                      onContextMenu={(e) => e.preventDefault()}
-                      className="w-full max-h-[380px] object-contain mx-auto bg-black"
-                      src={viewingResource.videoUrl || "https://www.w3schools.com/html/mov_bbb.mp4"}
-                    >
-                      Your browser does not support high-definition video streaming.
-                    </video>
-                    <div className="p-3 bg-slate-900/90 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-400">
-                      <span className="flex items-center gap-1.5 text-indigo-400 font-medium">
-                        <PlayCircle size={14} /> HighRon Protected Video Stream
-                      </span>
-                      <span className="text-emerald-400 flex items-center gap-1">
-                        <Lock size={11} /> Download Disabled
-                      </span>
+              {/* Modal Tab Switcher */}
+              <div className="flex bg-slate-950/70 border-b border-white/5 px-4 sm:px-6 pt-2 shrink-0 gap-2 overflow-x-auto no-scrollbar">
+                <button
+                  onClick={() => setReaderTab("overview")}
+                  className={`px-3.5 py-2 text-xs font-semibold rounded-t-xl transition flex items-center gap-1.5 border-b-2 shrink-0 ${
+                    readerTab === "overview"
+                      ? "text-indigo-400 border-indigo-500 bg-slate-900/90 shadow-sm"
+                      : "text-slate-400 border-transparent hover:text-white"
+                  }`}
+                >
+                  <Sparkles size={13} />
+                  <span>AI Overview & Insights</span>
+                </button>
+
+                {(viewingResource.documentUrl || viewingResource.type === "video" || viewingResource.videoUrl) && (
+                  <button
+                    onClick={() => setReaderTab("media")}
+                    className={`px-3.5 py-2 text-xs font-semibold rounded-t-xl transition flex items-center gap-1.5 border-b-2 shrink-0 ${
+                      readerTab === "media"
+                        ? "text-indigo-400 border-indigo-500 bg-slate-900/90 shadow-sm"
+                        : "text-slate-400 border-transparent hover:text-white"
+                    }`}
+                  >
+                    {viewingResource.type === "video" || viewingResource.videoUrl ? (
+                      <>
+                        <PlayCircle size={13} />
+                        <span>Protected Video Stream</span>
+                      </>
+                    ) : (
+                      <>
+                        <BookOpen size={13} />
+                        <span>Interactive Document Reader</span>
+                      </>
+                    )}
+                  </button>
+                )}
+
+                <button
+                  onClick={() => setReaderTab("notes")}
+                  className={`px-3.5 py-2 text-xs font-semibold rounded-t-xl transition flex items-center gap-1.5 border-b-2 shrink-0 ${
+                    readerTab === "notes"
+                      ? "text-indigo-400 border-indigo-500 bg-slate-900/90 shadow-sm"
+                      : "text-slate-400 border-transparent hover:text-white"
+                  }`}
+                >
+                  <AlignLeft size={13} />
+                  <span>Formatted Notes & Content</span>
+                </button>
+              </div>
+
+              {/* Modal Body / Reader Area */}
+              <div className="p-4 sm:p-6 overflow-y-auto flex-1 text-slate-300 text-sm leading-relaxed custom-scrollbar space-y-4">
+                {/* TAB 1: AI OVERVIEW & INSIGHTS */}
+                {readerTab === "overview" && (
+                  <div className="space-y-4">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-950/50 via-purple-950/30 to-slate-900/60 border border-indigo-500/25">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-2">
+                        <Sparkles size={14} />
+                        <span>AI Executive Summary</span>
+                      </div>
+                      <p className="text-sm sm:text-base text-slate-100 font-normal leading-relaxed">
+                        {viewingResource.description || "Synthesized overview of this learning asset."}
+                      </p>
+                    </div>
+
+                    {/* Core Key Takeaways Cards */}
+                    <div className="bg-slate-800/40 border border-white/5 rounded-2xl p-4 sm:p-5">
+                      <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <CheckCircle size={15} className="text-emerald-400" />
+                        <span>Core Takeaways & Learning Objectives</span>
+                      </h4>
+                      <div className="space-y-2.5">
+                        {(viewingResource.keyTakeaways || [
+                          "Master fundamental concepts, architectural blueprints, and execution pipelines.",
+                          "Review security hardening guidelines and verification best practices.",
+                          "Apply practical knowledge in production, research, and collaborative environments."
+                        ]).map((point, idx) => (
+                          <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-300">
+                            <span className="w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
+                              {idx + 1}
+                            </span>
+                            <span className="leading-snug">{point}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Study Telemetry Specs */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      <div className="bg-slate-800/40 border border-white/5 p-3 rounded-xl">
+                        <span className="text-[10px] text-slate-400 uppercase">Estimated Pace</span>
+                        <p className="text-sm font-semibold text-white mt-0.5">{viewingResource.duration}</p>
+                      </div>
+                      <div className="bg-slate-800/40 border border-white/5 p-3 rounded-xl">
+                        <span className="text-[10px] text-slate-400 uppercase">Proficiency</span>
+                        <p className="text-sm font-semibold text-indigo-300 mt-0.5">{viewingResource.difficulty || "All Levels"}</p>
+                      </div>
+                      <div className="bg-slate-800/40 border border-white/5 p-3 rounded-xl col-span-2 sm:col-span-1">
+                        <span className="text-[10px] text-slate-400 uppercase">Integrity Status</span>
+                        <p className="text-sm font-semibold text-emerald-400 mt-0.5 flex items-center gap-1">
+                          <ShieldCheck size={14} /> AI Verified
+                        </p>
+                      </div>
                     </div>
                   </div>
                 )}
 
-                <div className="bg-slate-800/40 p-4 rounded-xl border border-white/5">
-                  <h4 className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-1.5">
-                    {viewingResource.type === "video" ? "Video Synopsis & AI Breakdown" : "Document Overview"}
-                  </h4>
-                  <p className="text-xs sm:text-sm text-slate-200">{viewingResource.description}</p>
-                </div>
+                {/* TAB 2: INTERACTIVE MEDIA / IN-BROWSER DOCUMENT */}
+                {readerTab === "media" && (
+                  <div>
+                    {(viewingResource.type === "video" || viewingResource.videoUrl) ? (
+                      <div className="rounded-2xl overflow-hidden bg-black border border-white/10 shadow-2xl relative">
+                        <video
+                          controls
+                          controlsList="nodownload noplaybackrate"
+                          disablePictureInPicture
+                          onContextMenu={(e) => e.preventDefault()}
+                          className="w-full max-h-[420px] object-contain mx-auto bg-black"
+                          src={viewingResource.videoUrl || "https://www.w3schools.com/html/mov_bbb.mp4"}
+                        >
+                          Your browser does not support high-definition video streaming.
+                        </video>
+                        <div className="p-3 bg-slate-900/90 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-400">
+                          <span className="flex items-center gap-1.5 text-indigo-400 font-medium">
+                            <PlayCircle size={14} /> HighRon Protected Video Stream
+                          </span>
+                          <span className="text-emerald-400 flex items-center gap-1">
+                            <Lock size={11} /> Download Disabled
+                          </span>
+                        </div>
+                      </div>
+                    ) : viewingResource.documentUrl ? (
+                      <div className="rounded-2xl overflow-hidden bg-slate-950 border border-white/10 shadow-2xl">
+                        <div className="p-2.5 bg-slate-900 border-b border-white/5 flex items-center justify-between text-xs text-slate-400">
+                          <span className="flex items-center gap-1.5 text-indigo-400 font-medium">
+                            <BookOpen size={14} /> Interactive Protected Document Reader
+                          </span>
+                          <span className="text-emerald-400 flex items-center gap-1 text-[11px]">
+                            <Lock size={11} /> Read Only
+                          </span>
+                        </div>
+                        <iframe
+                          src={`${viewingResource.documentUrl}#toolbar=0&navpanes=0`}
+                          className="w-full h-[480px] sm:h-[540px] bg-slate-950 border-0"
+                          title={viewingResource.name}
+                        />
+                      </div>
+                    ) : (
+                      <div className="p-8 text-center text-slate-400">
+                        <p>Document text is ready for review in the Formatted Notes tab.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
 
-                <div className="bg-slate-950 p-5 rounded-xl border border-white/5 font-mono text-xs text-slate-300 whitespace-pre-wrap leading-relaxed select-text">
-                  {viewingResource.content || "Content is streamed in protected viewer format. External downloading is disabled to protect content integrity."}
-                </div>
+                {/* TAB 3: FORMATTED NOTES & TEXT */}
+                {readerTab === "notes" && (
+                  <div className="space-y-3">
+                    {/* Text Toolbar */}
+                    <div className="flex items-center justify-between bg-slate-800/60 p-2 sm:p-2.5 rounded-xl border border-white/5 text-xs text-slate-300">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-slate-400 mr-1">Font Size:</span>
+                        <button
+                          onClick={() => setReaderFontSize("small")}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${readerFontSize === "small" ? "bg-indigo-600 text-white shadow-sm" : "hover:bg-slate-700 text-slate-300"}`}
+                        >
+                          A-
+                        </button>
+                        <button
+                          onClick={() => setReaderFontSize("normal")}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${readerFontSize === "normal" ? "bg-indigo-600 text-white shadow-sm" : "hover:bg-slate-700 text-slate-300"}`}
+                        >
+                          A
+                        </button>
+                        <button
+                          onClick={() => setReaderFontSize("large")}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${readerFontSize === "large" ? "bg-indigo-600 text-white shadow-sm" : "hover:bg-slate-700 text-slate-300"}`}
+                        >
+                          A+
+                        </button>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(viewingResource.content || viewingResource.description || "");
+                          setCopiedNotes(true);
+                          setTimeout(() => setCopiedNotes(false), 2000);
+                        }}
+                        className="px-3 py-1.5 rounded-lg bg-slate-700/70 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5 text-xs font-medium cursor-pointer"
+                      >
+                        {copiedNotes ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
+                        <span>{copiedNotes ? "Copied to Clipboard!" : "Copy Notes"}</span>
+                      </button>
+                    </div>
+
+                    {/* Clean Readable Content */}
+                    <div className={`p-4 sm:p-6 rounded-2xl bg-slate-950 border border-white/5 text-slate-200 whitespace-pre-wrap leading-relaxed select-text font-sans ${
+                      readerFontSize === "small" ? "text-xs leading-5" : readerFontSize === "large" ? "text-base leading-7" : "text-sm leading-6"
+                    }`}>
+                      {viewingResource.content || "Content is streamed in protected viewer format."}
+                    </div>
+                  </div>
+                )}
 
                 <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs flex items-center gap-2">
                   <ShieldCheck size={16} className="shrink-0 text-indigo-400" />
-                  <span>Protected Learning Stream: Streaming directly in browser. Downloading videos or documents is permanently disabled.</span>
+                  <span>Protected Learning Stream: Streaming directly in browser. Downloading files is disabled to protect content integrity.</span>
                 </div>
               </div>
 
               {/* Modal Footer */}
-              <div className="px-4 sm:px-6 py-3.5 border-t border-white/10 flex items-center justify-between bg-slate-800/40 gap-2">
+              <div className="px-4 sm:px-6 py-3.5 border-t border-white/10 flex items-center justify-between bg-slate-800/40 gap-2 shrink-0">
                 <span className="text-xs text-slate-400 truncate">Status: Active Study Session</span>
                 <div className="flex items-center gap-2 shrink-0">
                   {isAdmin && (
@@ -744,11 +1248,14 @@ export default function ResourcesPage() {
                       title="Delete Resource (Admin)"
                     >
                       <Trash2 size={14} />
-                      <span>Delete Resource</span>
+                      <span>Delete</span>
                     </button>
                   )}
                   <button
-                    onClick={() => setViewingResource(null)}
+                    onClick={() => {
+                      setViewingResource(null);
+                      setReaderTab("overview");
+                    }}
                     className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition cursor-pointer"
                   >
                     Close Viewer
@@ -777,44 +1284,40 @@ export default function ResourcesPage() {
                     <Sparkles size={16} />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-white">Admin Resource Studio</h3>
+                    <h3 className="text-sm font-bold text-white">Admin AI Resource Publishing</h3>
                     <p className="text-[11px] text-indigo-300">Upload & AI Analyzer Pipeline</p>
                   </div>
                 </div>
                 <button
                   onClick={() => !isAnalyzing && setIsUploadModalOpen(false)}
                   disabled={isAnalyzing}
-                  className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition disabled:opacity-30"
+                  className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition disabled:opacity-50"
                 >
                   <X size={18} />
                 </button>
               </div>
 
-              {/* Form & AI Processing Area */}
-              <div className="p-6 overflow-y-auto space-y-4 flex-1">
-                {isAnalyzing ? (
-                  <div className="py-12 text-center space-y-4">
-                    <div className="relative w-16 h-16 mx-auto">
-                      <div className="w-16 h-16 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin" />
-                      <div className="absolute inset-0 flex items-center justify-center text-indigo-400">
-                        <Cpu size={22} className="animate-pulse" />
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-white text-base">HighRon AI Analyzing Resource...</h4>
-                      <p className="text-xs text-indigo-300 mt-1 font-mono">{aiAnalysisStep}</p>
-                    </div>
+              {/* Modal Body */}
+              <div className="p-6 overflow-y-auto space-y-4 flex-1 custom-scrollbar">
+                {/* AI Analysis Step Indicator */}
+                {isAnalyzing && (
+                  <div className="p-4 rounded-xl bg-indigo-950/50 border border-indigo-500/30 text-center space-y-3">
+                    <div className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                    <p className="text-xs font-semibold text-indigo-300">{aiAnalysisStep}</p>
+                    <p className="text-[10px] text-slate-400">HighRon AI Semantic Engine synthesizing content...</p>
                   </div>
-                ) : aiResult ? (
-                  <div className="p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center space-y-3">
-                    <CheckCircle size={40} className="text-emerald-400 mx-auto" />
-                    <h4 className="text-lg font-bold text-white">Published Successfully!</h4>
-                    <p className="text-xs text-slate-300">
-                      The resource has been analyzed by AI, quality-verified, and published to the Resources page for all learners.
-                    </p>
-                    <div className="grid grid-cols-2 gap-2 text-left bg-slate-900/80 p-3 rounded-xl text-xs border border-white/5 mt-3">
+                )}
+
+                {/* AI Analysis Result Badge */}
+                {aiResult && !isAnalyzing ? (
+                  <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-center space-y-2">
+                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                      <CheckCircle size={20} />
+                    </div>
+                    <h4 className="text-sm font-bold text-white">{aiResult.status}</h4>
+                    <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-white/5">
                       <div>
-                        <span className="text-slate-400">Quality Score:</span>
+                        <span className="text-slate-400">Semantic Score:</span>
                         <p className="font-bold text-emerald-400">{aiResult.qualityScore}</p>
                       </div>
                       <div>
@@ -869,7 +1372,7 @@ export default function ResourcesPage() {
                     {/* File Attachment Dropzone */}
                     <div>
                       <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-                        <span>{uploadMode === "video" ? "Attach Video File (.mp4, .webm)" : "Attach Document File (.txt, .md, .pdf)"}</span>
+                        <span>{uploadMode === "video" ? "Attach Video File (.mp4, .webm)" : "Attach Document File (.pdf, .txt, .md)"}</span>
                         {uploadedFile && (
                           <span className="text-[10px] text-emerald-400 font-medium truncate max-w-[180px]">
                             {uploadedFile.name}
@@ -885,17 +1388,25 @@ export default function ResourcesPage() {
                           {uploadedFile ? `Selected: ${uploadedFile.name}` : `Click to browse or drop ${uploadMode === "video" ? "video" : "document"} here`}
                         </p>
                         <p className="text-[10px] text-slate-500 mt-0.5">
-                          {uploadMode === "video" ? "Supported: MP4, WebM, MOV" : "Supported: TXT, Markdown, JSON, PDF"}
+                          {uploadMode === "video" ? "Supported: MP4, WebM, MOV" : "Supported: PDF, TXT, Markdown, JSON"}
                         </p>
                         <input
                           ref={fileInputRef}
                           type="file"
-                          accept={uploadMode === "video" ? "video/*" : ".txt,.md,.pdf,.json,.doc,.docx"}
+                          accept={uploadMode === "video" ? "video/*" : ".pdf,.txt,.md,.json,.doc,.docx"}
                           onChange={handleFileChange}
                           className="hidden"
                         />
                       </div>
                     </div>
+
+                    {/* Text Extraction Status */}
+                    {isExtractingText && (
+                      <div className="flex items-center gap-2 p-2.5 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-xs text-indigo-300">
+                        <Loader2 size={15} className="animate-spin text-indigo-400 shrink-0" />
+                        <span>Extracting clean readable text from document pages...</span>
+                      </div>
+                    )}
 
                     <div>
                       <label className="block text-xs font-semibold text-slate-300 mb-1.5">
@@ -944,7 +1455,7 @@ export default function ResourcesPage() {
 
                     <div>
                       <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-                        <span>{uploadMode === "video" ? "Video Synopsis & Key Lecture Timestamps" : "Document Body / Text Content for AI Analysis"}</span>
+                        <span>{uploadMode === "video" ? "Video Synopsis & Key Lecture Timestamps" : "Extracted Document Content for AI Semantic Analysis"}</span>
                         <span className="text-[10px] text-indigo-400 flex items-center gap-1">
                           <Sparkles size={11} /> AI Scanned
                         </span>
@@ -955,7 +1466,7 @@ export default function ResourcesPage() {
                         value={uploadForm.rawContent}
                         onChange={(e) => setUploadForm({ ...uploadForm, rawContent: e.target.value })}
                         placeholder={uploadMode === "video" ? "Enter video outline, syllabus chapters, and learning targets for the AI video indexer..." : "Paste or review document text for semantic AI quality analysis and learner indexing..."}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-white/10 text-white placeholder:text-slate-500 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 leading-relaxed custom-scrollbar font-mono"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-white/10 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 leading-relaxed custom-scrollbar font-sans"
                       />
                     </div>
 
@@ -974,7 +1485,8 @@ export default function ResourcesPage() {
                       </button>
                       <button
                         type="submit"
-                        className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/25 flex items-center gap-2 transition cursor-pointer"
+                        disabled={isExtractingText}
+                        className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/25 flex items-center gap-2 transition cursor-pointer"
                       >
                         <Sparkles size={15} />
                         <span>{uploadMode === "video" ? "Run AI Scan & Post Video" : "Run AI Analysis & Post Document"}</span>

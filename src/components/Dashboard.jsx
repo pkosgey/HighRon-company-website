@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import io from "socket.io-client";
 import { 
   Users, 
@@ -19,7 +20,9 @@ import {
   Shield,
   Sparkles,
   Smile,
-  Paperclip
+  Paperclip,
+  BookOpen,
+  Home
 } from "lucide-react";
 
 import { 
@@ -817,11 +820,11 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen h-[100dvh] w-full bg-slate-900 text-white overflow-hidden relative">
+    <div className="flex h-screen h-[100dvh] w-full bg-slate-900 text-white overflow-hidden fixed inset-0 md:static select-none md:select-auto touch-manipulation">
       {/* Mobile Sidebar Overlay */}
       {isMobileSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden"
           onClick={() => setIsMobileSidebarOpen(false)}
         />
       )}
@@ -832,8 +835,8 @@ export default function Dashboard() {
       }`}>
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
           {/* Brand Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
-            <div className="flex items-center gap-2.5">
+          <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-3">
+            <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
                 <Sparkles size={18} className="text-white" />
               </div>
@@ -841,9 +844,9 @@ export default function Dashboard() {
                 <h1 className="text-lg font-bold bg-gradient-to-r from-indigo-400 via-purple-300 to-indigo-200 bg-clip-text text-transparent leading-none">
                   HighRon
                 </h1>
-                <p className="text-[10px] text-slate-400 tracking-wider uppercase mt-1">Live Hub</p>
+                <p className="text-[10px] text-slate-400 tracking-wider uppercase mt-1">Live Hub Space</p>
               </div>
-            </div>
+            </Link>
             <button 
               onClick={() => setIsMobileSidebarOpen(false)}
               className="md:hidden p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition"
@@ -852,9 +855,27 @@ export default function Dashboard() {
               <X size={18} />
             </button>
           </div>
+
+          {/* Platform Navigation Links */}
+          <div className="grid grid-cols-2 gap-1.5 mb-3 shrink-0">
+            <Link
+              to="/resources"
+              className="px-2.5 py-2 rounded-xl bg-slate-800/70 hover:bg-indigo-600/25 text-slate-300 hover:text-indigo-200 text-[11px] font-semibold border border-white/5 transition flex items-center gap-1.5"
+            >
+              <BookOpen size={13} className="text-indigo-400 shrink-0" />
+              <span className="truncate">Resources</span>
+            </Link>
+            <Link
+              to="/notifications"
+              className="px-2.5 py-2 rounded-xl bg-slate-800/70 hover:bg-indigo-600/25 text-slate-300 hover:text-indigo-200 text-[11px] font-semibold border border-white/5 transition flex items-center gap-1.5"
+            >
+              <Bell size={13} className="text-indigo-400 shrink-0" />
+              <span className="truncate">Alerts</span>
+            </Link>
+          </div>
           
           {/* Navigation Tabs */}
-          <div className="flex mb-4 bg-slate-800/80 rounded-xl p-1 border border-white/5 shrink-0">
+          <div className="flex mb-3 bg-slate-800/80 rounded-xl p-1 border border-white/5 shrink-0">
             <button
               onClick={() => {
                 setActiveTab("chat");
@@ -889,7 +910,7 @@ export default function Dashboard() {
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
               placeholder="Search channels..."
-              className="w-full bg-slate-800/60 border border-white/5 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-full bg-slate-800/60 border border-white/5 rounded-xl pl-8 pr-3 py-1.5 text-base sm:text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             />
             {searchFilter && (
               <button 
@@ -1032,11 +1053,11 @@ export default function Dashboard() {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-h-0 w-full overflow-hidden bg-slate-950">
         {/* Header */}
-        <header className="bg-slate-900/90 backdrop-blur-md px-4 sm:px-6 py-3 border-b border-white/10 flex items-center justify-between gap-3 shrink-0 z-10">
-          <div className="flex items-center gap-3 min-w-0">
+        <header className="bg-slate-900/90 backdrop-blur-md px-3 sm:px-6 py-2.5 sm:py-3 border-b border-white/10 flex items-center justify-between gap-2 sm:gap-3 shrink-0 z-10">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
-              className="md:hidden p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white border border-white/5 focus:outline-none"
+              className="md:hidden p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white border border-white/5 focus:outline-none shrink-0"
               aria-label="Open navigation menu"
             >
               <div className="space-y-1">
@@ -1046,20 +1067,20 @@ export default function Dashboard() {
               </div>
             </button>
 
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+            <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0">
                 {activeTab === "chat" ? <Hash size={18} /> : <BarChart3 size={18} />}
               </div>
-              <div>
-                <h2 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-                  <span>{activeTab === "chat" ? activeChannel : "System Dashboard"}</span>
+              <div className="min-w-0">
+                <h2 className="text-sm sm:text-base font-bold text-white flex items-center gap-1.5 sm:gap-2 truncate">
+                  <span className="truncate">{activeTab === "chat" ? activeChannel : "System Dashboard"}</span>
                   {activeTab === "chat" && (
-                    <span className="text-[10px] font-normal px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                      Real-time
+                    <span className="text-[10px] font-normal px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 shrink-0 hidden xs:inline-block">
+                      Live
                     </span>
                   )}
                 </h2>
-                <p className="text-[11px] text-slate-400 hidden sm:block">
+                <p className="text-[11px] text-slate-400 hidden sm:block truncate">
                   {activeTab === "chat" 
                     ? `Live discussion in #${activeChannel} • Auto-persisted` 
                     : "Live platform metrics & notification logs"}
@@ -1068,7 +1089,17 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            {/* Quick Link to Resources */}
+            <Link
+              to="/resources"
+              className="text-xs bg-indigo-500/10 hover:bg-indigo-600/20 text-indigo-300 hover:text-white px-2.5 py-1.5 rounded-xl border border-indigo-500/20 transition flex items-center gap-1.5 font-medium"
+              title="Browse Learning & Security Resources"
+            >
+              <BookOpen size={13} />
+              <span className="hidden md:inline">Resources</span>
+            </Link>
+
             {activeTab === "chat" && (
               <button
                 onClick={() => {
@@ -1091,7 +1122,8 @@ export default function Dashboard() {
                   document.body.removeChild(link);
                   URL.revokeObjectURL(url);
                 }}
-                className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl border border-white/5 transition flex items-center gap-1.5"
+                className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 sm:px-3 py-1.5 rounded-xl border border-white/5 transition flex items-center gap-1.5"
+                title="Export Channel History"
               >
                 <Download size={13} />
                 <span className="hidden sm:inline">Export</span>
@@ -1101,18 +1133,18 @@ export default function Dashboard() {
             {activeTab === "dashboard" && notifications.length > 0 && (
               <button
                 onClick={clearAllNotifications}
-                className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl border border-white/5 transition"
+                className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 sm:px-3 py-1.5 rounded-xl border border-white/5 transition"
               >
                 Clear ({notifications.length})
               </button>
             )}
 
-            <div className="text-xs text-slate-300 flex items-center gap-1.5 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-white/5">
+            <div className="text-xs text-slate-300 flex items-center gap-1.5 bg-slate-800/80 px-2.5 sm:px-3 py-1.5 rounded-xl border border-white/5 shrink-0">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              <span className="font-medium text-[11px]">{onlineUsers} online</span>
+              <span className="font-medium text-[11px]">{onlineUsers} <span className="hidden sm:inline">online</span></span>
             </div>
           </div>
         </header>
@@ -1123,7 +1155,7 @@ export default function Dashboard() {
             /* Modern Chat Area */
             <div className="h-full flex flex-col min-h-0 bg-gradient-to-b from-slate-900/60 to-slate-950">
               {/* Messages Stream */}
-              <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4">
+              <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 overscroll-contain">
                 {/* Channel Welcome Banner */}
                 <div className="bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-slate-900/60 rounded-2xl p-4 sm:p-5 border border-indigo-500/20 backdrop-blur-md shadow-lg">
                   <div className="flex items-center gap-3 mb-2">
@@ -1188,7 +1220,7 @@ export default function Dashboard() {
                                 </button>
                               )}
                             </div>
-                            <div className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm break-words leading-relaxed shadow-sm ${
+                            <div className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm break-words [overflow-wrap:anywhere] leading-relaxed shadow-sm ${
                               isMe 
                                 ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-tr-sm" 
                                 : "bg-slate-800/90 text-slate-200 border border-white/5 rounded-tl-sm hover:border-white/10 transition-colors"
@@ -1206,7 +1238,7 @@ export default function Dashboard() {
               {/* Message Input Form */}
               <form
                 onSubmit={sendMessage}
-                className="bg-slate-900/90 backdrop-blur-md p-3 sm:p-4 border-t border-white/10 flex items-center gap-2 sm:gap-3 shrink-0"
+                className="bg-slate-900/95 backdrop-blur-md p-2.5 sm:p-4 border-t border-white/10 flex items-center gap-2 sm:gap-3 shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] touch-manipulation"
               >
                 <div className="flex-1 relative flex items-center">
                   <input
@@ -1214,15 +1246,15 @@ export default function Dashboard() {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder={`Message #${activeChannel}...`}
-                    className="w-full pl-4 pr-12 py-2.5 sm:py-3 rounded-xl bg-slate-800/90 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs sm:text-sm border border-white/5 transition"
+                    className="w-full pl-3.5 sm:pl-4 pr-10 sm:pr-12 py-2.5 sm:py-3 rounded-xl bg-slate-800/90 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base sm:text-sm border border-white/5 transition"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={!newMessage.trim()}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-40 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl transition text-white shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 shrink-0 text-xs sm:text-sm font-semibold cursor-pointer disabled:cursor-not-allowed"
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-40 px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-xl transition text-white shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 text-sm font-semibold cursor-pointer disabled:cursor-not-allowed"
                 >
-                  <span>Send</span>
+                  <span className="hidden sm:inline">Send</span>
                   <Send size={15} />
                 </button>
               </form>

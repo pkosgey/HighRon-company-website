@@ -820,7 +820,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen h-[100dvh] w-full bg-slate-900 text-white overflow-hidden fixed inset-0 md:static select-none md:select-auto touch-manipulation">
+    <div className="chat-app-viewport flex flex-col md:flex-row w-full bg-slate-900 text-white select-none md:select-auto touch-manipulation">
       {/* Mobile Sidebar Overlay */}
       {isMobileSidebarOpen && (
         <div 
@@ -1051,7 +1051,7 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-h-0 w-full overflow-hidden bg-slate-950">
+      <main className="flex-1 flex flex-col min-h-0 h-full w-full overflow-hidden bg-slate-950 relative">
         {/* Header */}
         <header className="bg-slate-900/90 backdrop-blur-md px-3 sm:px-6 py-2.5 sm:py-3 border-b border-white/10 flex items-center justify-between gap-2 sm:gap-3 shrink-0 z-10">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -1150,12 +1150,12 @@ export default function Dashboard() {
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-hidden min-h-0 relative">
+        <div className="flex-1 flex flex-col min-h-0 h-full w-full overflow-hidden relative">
           {activeTab === "chat" ? (
             /* Modern Chat Area */
-            <div className="h-full flex flex-col min-h-0 bg-gradient-to-b from-slate-900/60 to-slate-950">
+            <div className="flex-1 flex flex-col min-h-0 h-full w-full overflow-hidden bg-gradient-to-b from-slate-900/60 to-slate-950 relative">
               {/* Messages Stream */}
-              <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 overscroll-contain">
+              <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 space-y-4 overscroll-contain">
                 {/* Channel Welcome Banner */}
                 <div className="bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-slate-900/60 rounded-2xl p-4 sm:p-5 border border-indigo-500/20 backdrop-blur-md shadow-lg">
                   <div className="flex items-center gap-3 mb-2">
@@ -1232,15 +1232,18 @@ export default function Dashboard() {
                       );
                     })
                 )}
-                <div ref={messagesEndRef} />
+                <div ref={messagesEndRef} className="h-2 shrink-0" />
               </div>
 
-              {/* Message Input Form */}
+              {/* Message Input Form - Pinned at bottom and guaranteed visible on all mobile screens */}
               <form
                 onSubmit={sendMessage}
-                className="bg-slate-900/95 backdrop-blur-md p-2.5 sm:p-4 border-t border-white/10 flex items-center gap-2 sm:gap-3 shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] touch-manipulation"
+                className="sticky bottom-0 left-0 right-0 z-40 w-full bg-slate-900/98 backdrop-blur-xl px-3 py-2.5 sm:px-4 sm:py-3 border-t border-white/10 flex items-center gap-2 sm:gap-3 shrink-0 shadow-2xl"
+                style={{
+                  paddingBottom: "max(12px, env(safe-area-inset-bottom, 12px))"
+                }}
               >
-                <div className="flex-1 relative flex items-center">
+                <div className="flex-1 relative flex items-center min-w-0">
                   <input
                     type="text"
                     value={newMessage}
